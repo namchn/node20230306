@@ -1,3 +1,20 @@
+
+==mysql/.env 파일에 설정되어 있음=======
+
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USERNAME=dev01
+MYSQL_PASSWORD=1234
+MYSQL_DB=node
+MYSQL_LIMIT=10
+
+=======================================
+
+
+
+
+
+
 CREATE TABLE `member` (
   `member_id` varchar(120) COLLATE utf8mb4_general_ci NOT NULL,
   `member_nm` varchar(120) COLLATE utf8mb4_general_ci NOT NULL,
