@@ -63,3 +63,16 @@ CREATE TABLE `member` (
   KEY `member_nm` (`member_nm`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+
+
+
+
+
+CREATE TABLE `clickTable` (
+  `member_id` varchar(120) COLLATE utf8mb4_general_ci NOT NULL,
+  `click_no` int DEFAULT NULL, 
+  `create_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`member_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

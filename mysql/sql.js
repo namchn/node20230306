@@ -72,4 +72,13 @@ module.exports = {
   memberRecoverOne: {
     query: "update member set delete_yn='N' where member_id=?",
   },
+  memberClickOne: {
+    query: "select * from clickTable where member_id=?",
+  },
+  memberClickInsert: {
+    query: "insert into clickTable(member_id,click_no) values(?,?)",
+  },
+  memberClickUpdate: {
+    query: "update clickTable set click_no=? where member_id=?",
+  },
 };

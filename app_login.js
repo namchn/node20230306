@@ -173,3 +173,32 @@ app.post("/member/memberRecoverOne", async (req, res) => {
   const result = await mysql.query("memberRecoverOne", req.body.param);
   res.send(result);
 });
+
+//아이디 클릭수 체크
+app.post("/member/click", async (req, res) => {
+  let member_id = req.body.member_id;
+  let click_no = "1";
+
+  if (member_id == "") {
+    res.redirect("/home");
+  } else {
+    const result = await mysql.query("memberClickOne", member_id);
+
+    console.log(result[0].click_no);
+
+    if (result.length == 0) {
+      let params = [member_id, click_no];
+      const clickInsert = await mysql.query("memberClickInsert", params);
+    } else {
+      click_no = result[0].click_no + 1;
+      let params = [click_no, member_id];
+      const clickUpdate = await mysql.query("memberClickUpdate", params);
+    }
+
+    console.log(
+      "아이디 " + member_id + "의 카운트 :" + (result[0].click_no + 1)
+    );
+    res.redirect("/home");
+    //res.send(result);
+  }
+});
