@@ -1,0 +1,2 @@
+#html 템플릿
+npm install ejs

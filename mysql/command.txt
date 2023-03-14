@@ -1,0 +1,2 @@
+#pug 뷰 템블릿
+npm install pug   

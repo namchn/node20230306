@@ -1,3 +1,5 @@
+const fs = require("fs"); //파일시스템
+
 const multer = require("multer");
 const path = require("path");
 const xlsx = require("xlsx");
@@ -174,6 +176,7 @@ app.post("/member/memberRecoverOne", async (req, res) => {
   res.send(result);
 });
 
+/**
 //아이디 클릭수 체크
 app.post("/member/click", async (req, res) => {
   let member_id = req.body.member_id;
@@ -198,7 +201,78 @@ app.post("/member/click", async (req, res) => {
     console.log(
       "아이디 " + member_id + "의 카운트 :" + (result[0].click_no + 1)
     );
+    //res.redirect("/home");
+
+    fs.readFile("./login/home.html", "utf8", function (err, buf) {
+      res.send(buf);
+    });
+
+    //res.send("아이디 " + member_id + "의 카운트 :" + (result[0].click_no + 1));
+  }
+});
+ */
+
+//뷰pug 템플릿
+//app.set("view engine", "pug");
+//app.set("views", "views");
+//const home = (req, res) => res.render("main");
+//app.get("/main", home);
+
+//app.engine("html", require("ejs").renderFile);
+//app.set("view engine", "html");
+
+const ejs = require("ejs");
+app.engine("html", require("ejs").renderFile);
+app.set("view engine", "html");
+//app.set("view engine", "ejs");
+app.set("views", "./views");
+
+app.get("/ejs", async (req, res) => {
+  res.render("home", {
+    title: "나는 나는 남천우 입니다.",
+    length: 5,
+  });
+});
+
+//아이디 클릭수 체크
+app.post("/member/click", async (req, res) => {
+  let member_id = req.body.member_id;
+  let click_no = "1";
+
+  if (member_id == "") {
     res.redirect("/home");
-    //res.send(result);
+  } else {
+    const result = await mysql.query("memberClickOne", member_id);
+
+    console.log(result[0].click_no);
+
+    if (result.length == 0) {
+      let params = [member_id, click_no];
+      const clickInsert = await mysql.query("memberClickInsert", params);
+    } else {
+      click_no = result[0].click_no + 1;
+      let params = [click_no, member_id];
+      const clickUpdate = await mysql.query("memberClickUpdate", params);
+    }
+
+    console.log(
+      "아이디 " + member_id + "의 카운트 :" + (result[0].click_no + 1)
+    );
+    //res.redirect("/home");
+
+    /** 
+    fs.readFile("./login/home.html", "utf8", function (err, buf) {
+      res.send(buf);
+    });
+    */
+
+    //res.send("아이디 " + member_id + "의 카운트 :" + (result[0].click_no + 1));
+
+    res.render("home", {
+      member_id: member_id,
+      click_no: result[0].click_no + 1,
+      length: 5,
+    });
+    //res.redirect("/home");
   }
 });
