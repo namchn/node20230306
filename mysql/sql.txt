@@ -10,17 +10,21 @@ MYSQL_LIMIT=10
 
 =======================================
 
+CREATE DATABASE node default CHARACTER SET UTF8; 
 use node;
-create user 'dev01'@'%' IDENTIFIED WITH MYSQL_NATIVE_PASSWORD BY '1234';
+-- create user 'dev01'@'%' IDENTIFIED WITH MYSQL_NATIVE_PASSWORD BY '1234';
+CREATE USER 'dev01'@'%' IDENTIFIED BY '1234';
 GRANT ALL PRIVILEges ON node.* to 'dev01'@'%' WITH GRANT OPTION;
 flush privileges;
-//mysql.user 테이블에서 plugin, authentication_string 확인
+
+
+-- mysql.user 테이블에서 plugin, authentication_string 확인
 select host, user from mysql.user;
 select host, user, plugin, authentication_string from mysql.user; 
-//
+--
 
 
-//
+--
 CREATE TABLE `member` (
   `member_id` varchar(120) COLLATE utf8mb4_general_ci NOT NULL,
   `member_nm` varchar(120) COLLATE utf8mb4_general_ci NOT NULL,
@@ -72,7 +76,7 @@ CREATE TABLE `member` (
 
 
 
-//
+--
 CREATE TABLE `article` (
   `article_no` int NOT NULL AUTO_INCREMENT,
   `parent_no` int NOT NULL DEFAULT '0',
@@ -159,7 +163,7 @@ CREATE TABLE `article` (
 
 
 
-//
+--
 CREATE TABLE `clickTable` (
   `member_id` varchar(120) COLLATE utf8mb4_general_ci NOT NULL,
   `click_no` int DEFAULT NULL, 

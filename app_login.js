@@ -108,7 +108,8 @@ app.get("/er", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("들어온걸 환영한다 용사여");
+  res.redirect("/login/loginHome");
+  //res.send("들어온걸 환영한다 용사여");
 });
 
 app.post("/", async (req, res) => {
