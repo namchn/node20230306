@@ -1,0 +1,7 @@
+
+공공 api 사용
+
+수도권 전철  시간별 탑승 이용 api 
+https://www.data.go.kr/iim/api/selectAPIAcountView.do
+ 
+ 

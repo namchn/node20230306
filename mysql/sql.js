@@ -45,16 +45,19 @@ module.exports = {
     query: "select * from customers ",
   },
   memberList: {
-    query: "select * from member where ?",
+    query: "select * from member where ? LIMIT 1000",
   },
   memberListCount: {
     query: "select count(*) cnt from member where ?",
   },
   memberListOne: {
-    query: "select * from member where member_id=?",
+    query: "select * from member where member_id=? LIMIT 1000",
   },
   memberListOneCheck: {
-    query: "select * from member where member_id=? and member_pw=?",
+    query: "select * from member where member_id=? and member_pw=? LIMIT 1000",
+  },
+  memberOne: {
+    query: "select * from member where member_id=?  LIMIT 1000",
   },
   memberInsert: {
     query: "insert into member set ?",
@@ -70,15 +73,40 @@ module.exports = {
     query: "update member set delete_yn='Y' where member_id=?",
   },
   memberRecoverOne: {
-    query: "update member set delete_yn='N' where member_id=?",
+    query: "update member set delete_yn='N' where member_id=? ",
   },
   memberClickOne: {
-    query: "select * from clickTable where member_id=?",
+    query: "select * from clickTable where member_id=? LIMIT 1000",
   },
   memberClickInsert: {
     query: "insert into clickTable(member_id,click_no) values(?,?)",
   },
   memberClickUpdate: {
     query: "update clickTable set click_no=? where member_id=?",
+  },
+  articleInsertOne: {
+    query:
+      "insert into article(writer_id,writer_nm,title,text,board_no) values(?,?,?,?,?)",
+  },
+  articleClickUpdate: {
+    query: "update article set click_cnt=? where article_no=?",
+  },
+  articleList: {
+    query:
+      "select * from article where board_no=? and delete_yn='N'  order by article_no desc LIMIT 1000",
+  },
+  articleAdminList: {
+    query:
+      "select * from article where board_no=?  order by article_no desc LIMIT 1000",
+  },
+  articleView: {
+    query: "select * from article where article_no=? LIMIT 1000",
+  },
+  articleUpdateOne: {
+    query:
+      "update article set writer_nm=? , title=?  , text=?  , board_no=?  where article_no=?",
+  },
+  articleDeleteYnOne: {
+    query: "update article set delete_yn=?   where article_no=?",
   },
 };

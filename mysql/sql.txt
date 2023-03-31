@@ -10,11 +10,17 @@ MYSQL_LIMIT=10
 
 =======================================
 
+use node;
+create user 'dev01'@'%' IDENTIFIED WITH MYSQL_NATIVE_PASSWORD BY '1234';
+GRANT ALL PRIVILEges ON node.* to 'dev01'@'%' WITH GRANT OPTION;
+flush privileges;
+//mysql.user 테이블에서 plugin, authentication_string 확인
+select host, user from mysql.user;
+select host, user, plugin, authentication_string from mysql.user; 
+//
 
 
-
-
-
+//
 CREATE TABLE `member` (
   `member_id` varchar(120) COLLATE utf8mb4_general_ci NOT NULL,
   `member_nm` varchar(120) COLLATE utf8mb4_general_ci NOT NULL,
@@ -66,9 +72,94 @@ CREATE TABLE `member` (
 
 
 
+//
+CREATE TABLE `article` (
+  `article_no` int NOT NULL AUTO_INCREMENT,
+  `parent_no` int NOT NULL DEFAULT '0',
+  `board_no` int NOT NULL DEFAULT '0',
+  `order_no` int DEFAULT '0',
+  `group_no` int DEFAULT NULL,
+  `depth` int DEFAULT '0',
+  `category_id` int DEFAULT NULL,
+  `title` varchar(500) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `text` mediumtext COLLATE utf8mb4_general_ci,
+  `authent_ty` varchar(2) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `writer_id` varchar(60) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `writer_nm` varchar(64) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `writer_pw` varchar(500) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `writer_regno` varchar(500) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `writer_email` varchar(128) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `writer_tel` varchar(16) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `writer_mobile` varchar(16) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `click_cnt` int NOT NULL DEFAULT '0',
+  `delete_yn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'N',
+  `secret_yn` char(1) COLLATE utf8mb4_general_ci DEFAULT 'N',
+  `article_reply` mediumtext COLLATE utf8mb4_general_ci,
+  `reply_dt` datetime DEFAULT NULL,
+  `reply_id` varchar(60) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reply_nm` varchar(64) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reply_tel` varchar(16) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reply_email` varchar(128) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reply_complete_yn` char(1) COLLATE utf8mb4_general_ci DEFAULT 'N',
+  `html_yn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Y',
+  `reply_html_yn` char(1) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Y',
+  `state` varchar(60) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `confirm_yn` char(1) COLLATE utf8mb4_general_ci DEFAULT 'Y',
+  `info_protect_yn` char(1) COLLATE utf8mb4_general_ci DEFAULT 'N',
+  `notice_start` int NOT NULL DEFAULT '0',
+  `notice_end` int NOT NULL DEFAULT '0',
+  `delete_datetime` datetime DEFAULT NULL,
+  `delete_id` varchar(60) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `delete_nm` varchar(60) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `delete_ip` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `write_ip` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `good_point` int DEFAULT NULL,
+  `bad_point` int DEFAULT NULL,
+  `writer_sns_id` varchar(128) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sns_provider` varchar(16) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `etc_date1` datetime DEFAULT NULL,
+  `etc_date2` datetime DEFAULT NULL,
+  `etc_char1` varchar(12) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `etc_char2` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `etc_char3` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `etc_char4` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `etc_text1` mediumtext COLLATE utf8mb4_general_ci,
+  `etc_text2` mediumtext COLLATE utf8mb4_general_ci,
+  `create_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `order_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `order_no_user` int DEFAULT '99999999',
+  `custom_field` mediumtext COLLATE utf8mb4_general_ci,
+  `editor_thumb_img` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`article_no`),
+  KEY `board_no` (`board_no`),
+  KEY `board_no_2` (`board_no`,`delete_yn`,`confirm_yn`),
+  KEY `notice_start` (`notice_start`),
+  KEY `notice_end` (`notice_end`),
+  KEY `delete_yn` (`delete_yn`),
+  KEY `confirm_yn` (`confirm_yn`),
+  KEY `writer_id` (`writer_id`),
+  KEY `writer_regno` (`writer_regno`),
+  KEY `state` (`state`),
+  KEY `secret_yn` (`secret_yn`),
+  KEY `parent_no` (`parent_no`),
+  KEY `category_id` (`category_id`),
+  KEY `click_cnt` (`click_cnt`),
+  KEY `order_dt` (`order_dt`),
+  KEY `create_dt` (`create_dt`),
+  KEY `order_no_user` (`order_no_user`),
+  KEY `group_no` (`group_no`),
+  KEY `order_no` (`order_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 
+
+
+
+
+
+//
 CREATE TABLE `clickTable` (
   `member_id` varchar(120) COLLATE utf8mb4_general_ci NOT NULL,
   `click_no` int DEFAULT NULL, 
@@ -76,3 +167,5 @@ CREATE TABLE `clickTable` (
   `update_dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`member_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+

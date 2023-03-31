@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>홈 페이지</title>
+  </head>
+  <body>
+    welcome to my home!
+
+    <p>
+      <a href="/member/memberJoinForm"><button>가입폼</button></a>
+    </p>
+    <p>
+      <a href="/member/loginform"><button>로그인 폼</button></a>
+    </p>
+    <p>
+      <a href="/member/memberList"><button>가입자 리스트(관리자)</button></a>
+    </p>
+    <div>
+      <form action="/member/click" method="post">
+        <input type="text" name="member_id" placeholder="아이디값을 적으세요" />
+        <input type="submit" value="클릭" />
+      </form>
+      <%= member_id %> 의 클릭수는 : <%= click_no %>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>홈 페이지</title>
+  </head>
+  <body>
+    <h3>기차</h3>
+
+    <div>
+      의 클릭수는 : <%= trlist.length %>
+
+      <ul>
+        <% for(var i=0; i < trlist.length ; i++){ %>
+        <li><%= "LOOP" + trlist[i].station_nm %></li>
+        <% } %>
+      </ul>
+    </div>
+  </body>
+</html>

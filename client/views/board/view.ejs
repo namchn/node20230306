@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>상세 페이지</title>
+    <link href="/client/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="/client/css/user.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <header>
+      <div class="homebox">
+        <a href="index.html" class="logo"></a>
+      </div>
+    </header>
+
+    <!-- 템플릿 분리-->
+    <%-include ('./nav.ejs') %>
+
+    <main>
+      <form class="detail">
+        <div class="name">
+          <p><%=article[0].title%></p>
+        </div>
+        <div class="date">
+          <p><%=article[0].writer_nm %></p>
+        </div>
+        <div class="date">
+          <p>
+            <%=moment(article[0].create_dt).format('YYYY-MM-DD HH:mm:ss') %>
+          </p>
+        </div>
+        <hr />
+        <pre class="box">
+          <%=article[0].text %>
+        </pre>
+        <div class="button">
+          <p>
+            <% if (authYn ==true ) { %>
+            <a href="/board/edit?article_no=<%=article[0].article_no%>"
+              >글수정</a
+            >
+            <a
+              href="/board/delete?article_no=<%=article[0].article_no%>&board_no=<%=article[0].board_no%>"
+              >글삭제</a
+            >
+            <% } %>
+            <a href="/board/list?board_no=<%=article[0].board_no%>">목록</a>
+          </p>
+        </div>
+      </form>
+    </main>
+
+    <!-- 템플릿 분리-->
+    <%-include ('./footer.ejs') %>
+  </body>
+</html>

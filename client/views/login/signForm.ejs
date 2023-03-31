@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>가입신청서</title>
+    <link href="/client/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="/client/css/user.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <header>
+      <div class="homebox">
+        <a href="index.html" class="logo"></a>
+      </div>
+    </header>
+
+    <!-- 템플릿 분리-->
+    <%-include ('./nav.ejs') %>
+
+    <main>
+      <form class="sign" action="/login/memberJoin" method="post">
+        <h1>가입신청서</h1>
+        <h3>아이디</h3>
+        <input
+          name="member_id"
+          type="text"
+          placeholder="아이디를 만들어 주세요"
+          class="id"
+          required
+        />
+        <h3>이름</h3>
+        <input
+          name="member_nm"
+          type="text"
+          placeholder="이름을 작성해 주세요"
+          class="name"
+          required
+        />
+        <h3>비밀번호</h3>
+        <input
+          name="member_pw"
+          type="password"
+          placeholder="비밀번호를 작성해 주세요"
+          class="pw"
+          required
+        />
+        <h3>비밀번호</h3>
+        <input
+          name="member_pw2"
+          type="password"
+          placeholder="비밀번호를 똑같이 한번 더 작성해 주세요"
+          class="pw"
+          required
+        />
+        <input type="submit" value="가입하기" class="box" />
+      </form>
+    </main>
+
+    <!-- 템플릿 분리-->
+    <%-include ('./footer.ejs') %>
+  </body>
+</html>

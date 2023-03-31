@@ -1,0 +1,38 @@
+<nav>
+  <div class="parent">
+    <div class="first">
+      <a href="/login/loginHome"><span>홈으로</span></a>
+    </div>
+
+    <!-- -->
+    <% if (isLogin ==true ) { %>
+    <div class="second">
+      안녕하세요 <%=userInfo %>님 반갑습니다!
+      <a href="/login/loginOut"><span>[로그아웃]</span></a>
+    </div>
+    <% } %>
+
+    <!-- -->
+    <% if (isLogin !=true ) { %>
+    <div class="third">
+      안녕하세요 반갑습니다!
+      <a href="/login/loginform"><span>[로그인하기]</span></a>
+      <a href="/login/memberJoinForm">[가입하기]</a>
+    </div>
+    <% } %>
+  </div>
+
+  <div class="menubox">
+    <%#
+    <li><a href="/board/home">홈</a></li>
+    %>
+
+    <!-- -->
+    <% if (isLogin ==true ) { %>
+    <ul>
+      <li><a href="/board/list?board_no=11">자유게시판</a></li>
+      <li><a href="/board/list?board_no=12">자유게시판2</a></li>
+    </ul>
+    <% } %>
+  </div>
+</nav>

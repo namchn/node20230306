@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 
-crypto.createHash("sha512").update("pw1234").digest("base64");
+//crypto.createHash("sha512").update("pw1234").digest("base64");
 
 //console.log(crypto);
 

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게시판 글수정</title>
+    <link href="/client/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="/client/css/user.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <header>
+      <div class="homebox">
+        <div>
+          <a href="index.html" class="logo"></a>
+        </div>
+      </div>
+    </header>
+
+    <!-- 내가 작성한 부분
+    <form action="/board/insert" method="post">
+      <label for="title">title</label>
+      <input type="text" name="title" id="title" />
+      <label for="text">text</label>
+      <input type="text" name="text" id="text" />
+      <label for="writer_nm">writer_nm</label>
+      <input type="text" name="writer_nm" id="writer_nm" />
+      <label for="board_no">board_no</label>
+      <input type="text" name="board_no" id="board_no" />
+      <button type="submit">작성하기</button>
+    </form>
+    -->
+
+    <!-- 템플릿 분리-->
+    <%-include ('./nav.ejs') %>
+
+    <main>
+      <form class="write" action="/board/update" method="post">
+        <label for="title" style="display: none">title</label>
+
+        <!-- board_no-->
+        <input
+          type="hidden"
+          name="board_no"
+          id="board_no"
+          value="<%=article[0].board_no %>"
+          required
+        />
+
+        <!-- article_no-->
+        <input
+          type="hidden"
+          name="article_no"
+          id="article_no"
+          value="<%=article[0].article_no %>"
+          required
+        />
+
+        <input
+          type="text"
+          name="title"
+          id="title"
+          placeholder="제목을 입력해주세요."
+          required
+          value="<%=article[0].title %>"
+        />
+
+        <label for="writer_nm" style="display: none">writer_nm</label>
+        <input
+          type="text"
+          name="writer_nm"
+          id="writer_nm"
+          placeholder="작성자를 입력해주세요."
+          required
+          value="<%=article[0].writer_nm %>"
+        />
+
+        <label for="text" style="display: none">text</label>
+        <textarea
+          name="text"
+          class="text"
+          id="text"
+          placeholder="내용을 입력해주세요."
+          required
+        >
+<%=article[0].text %></textarea
+        >
+        <div class="button">
+          <p>
+            <button type="submit">글수정</button>
+            <a href="/login/loginHome">홈</a>
+            <a href="/board/list?board_no=<%=article[0].board_no %>">리스트</a>
+          </p>
+        </div>
+      </form>
+    </main>
+
+    <!-- 템플릿 분리-->
+    <%-include ('./footer.ejs') %>
+  </body>
+</html>
