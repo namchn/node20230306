@@ -79,11 +79,6 @@ app.use("/xlsx", express.static("xlsx"));
 app.use("/login", express.static("login"));
 app.use("/client", express.static("client"));
 
-// 기본경로나 /user말고 다른곳 진입했을경우 실행
-app.use((req, res, next) => {
-  res.status(404).send("Not Found");
-});
-
 app.use(
   express.json({
     limit: "50mb", //
@@ -104,6 +99,12 @@ app.use((req, res, next) => {
   //next(error);
 });
 */
+
+app.get("/", (req, res) => {
+  res.redirect("/login/loginHome");
+  //res.send("들어온걸 환영한다 용사여");
+});
+
 app.get("/er", (req, res) => {
   //const error = new HttpError("경로를 찾을 수 없습니다.", 404);
   //throw error;
@@ -114,9 +115,9 @@ app.get("/er", (req, res) => {
   res.send("error 테스트");
 });
 
-app.get("/", (req, res) => {
-  res.redirect("/login/loginHome");
-  //res.send("들어온걸 환영한다 용사여");
+// 기본경로나 /user말고 다른곳 진입했을경우 실행
+app.use((req, res, next) => {
+  res.status(404).send("Not Found");
 });
 
 app.post("/", async (req, res) => {
