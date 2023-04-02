@@ -51,7 +51,11 @@ router.get("/", async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
   console.log(jsName + "/");
   //res.redirect("/login/home.html");
-  res.send("result");
+  //res.send("result!");
+  res.render("board/boardList", {
+    title: "나는 나는 남천우 입니다.",
+    length: 5,
+  });
 });
 
 //멤버 가입폼 @

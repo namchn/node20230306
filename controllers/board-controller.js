@@ -8,6 +8,10 @@ const loginCheckModule = require("../modules/login/login-check");
 const session = require("../modules/session/session");
 //유효값 체크 모듈
 const validCheckModule = require("../modules/valid/valid");
+//카운트 모듈
+let moduleViewCount = require("../modules/count/viewCount");
+//현재시간
+let today = moment().format();
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -19,8 +23,10 @@ const { validationResult } = require("express-validator");
 
 const getTest = async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
-  console.log(jsName + "/get");
-  console.log("adress: " + "/get");
+  const functionName = "getTest";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
   //res.redirect("/login/home.html");
   //res.send("result!!");
 
@@ -32,8 +38,10 @@ const getTest = async (req, res) => {
 
 const PostTest = async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
-  console.log(jsName + "/post");
-  console.log("adress: " + "/post");
+  const functionName = "PostTest";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
   //res.redirect("/login/home.html");
   //res.send("result!!");
 
@@ -46,7 +54,10 @@ const PostTest = async (req, res) => {
 //
 const home = async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
-  console.log(jsName + "/home");
+  const functionName = "home";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
   //res.redirect("/client/views/home/home.html");
   //res.send(result);
   res.render("home/home", {
@@ -57,11 +68,14 @@ const home = async (req, res) => {
 
 //멤버 리스트
 const memberList = async (req, res) => {
+  const functionName = "memberList";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
   const mysql = require("../mysql/index.js");
-  console.log(jsName + "/memberList");
   let params;
 
-  console.log(req.query);
+  //console.log(req.query);
   /** 
     if (req.query == null) {
       params = "1=1";
@@ -84,11 +98,16 @@ const memberList = async (req, res) => {
   });
   //res.send(members);
 };
+
+/////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
 //글쓰기 폼
 const writeForm = async (req, res) => {
-  console.log(jsName + "/writeForm");
+  const functionName = "writeForm";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
 
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
@@ -96,6 +115,11 @@ const writeForm = async (req, res) => {
   let renderURL = "board/write"; //랜딩 주소
   //let articleList; //디비 결과
   let boardNo;
+
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
 
   if (isValid) {
     //로그인 체크
@@ -108,6 +132,7 @@ const writeForm = async (req, res) => {
 
   if (isValid) {
     //사용자 확인
+    console.log(today + "======");
     console.log(loginResult.userInfo);
   }
 
@@ -142,7 +167,10 @@ const writeForm = async (req, res) => {
 
 //글쓰기 insert
 const insert = async (req, res) => {
-  console.log(jsName + "/insert");
+  const functionName = "insert";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
   const mysql = require("../mysql/index.js");
 
   let isValid = true; //로직 통과 체크
@@ -152,6 +180,11 @@ const insert = async (req, res) => {
   let falseRedirectURL = "/board/write"; //잘못되었을경우 리다이렉트 주소
   //let renderURL = "board/articleList2"; //랜딩 주소
   let writer_id;
+
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
 
   if (isValid) {
     //로그인 체크
@@ -163,6 +196,7 @@ const insert = async (req, res) => {
   }
   if (isValid) {
     //사용자 확인
+    console.log(today + "======");
     console.log("사용자 확인: " + loginResult.userInfo);
 
     writer_id = loginResult.userInfo;
@@ -244,7 +278,10 @@ const insert = async (req, res) => {
 
 //게시글 리스트
 const writeList = async (req, res) => {
-  console.log(jsName + "/writeList");
+  const functionName = "writeList";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
 
   const mysql = require("../mysql/index.js");
 
@@ -254,6 +291,11 @@ const writeList = async (req, res) => {
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
   let renderURL = "board/articleList2"; //랜딩 주소
   let boardNo;
+
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
 
   if (isValid) {
     //쿼리값 확인
@@ -324,7 +366,10 @@ const writeList = async (req, res) => {
 
 //게시글 상세보기
 const view = async (req, res) => {
-  console.log(jsName + "/view");
+  const functionName = "view";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
   const mysql = require("../mysql/index.js");
 
   let isValid = true; //로직 통과 체크
@@ -338,6 +383,11 @@ const view = async (req, res) => {
   let member_id;
   let authYn = false;
 
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
+
   if (isValid) {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
@@ -348,6 +398,7 @@ const view = async (req, res) => {
   }
 
   if (isValid) {
+    console.log(today + "======");
     console.log("사용자 확인: " + loginResult.userInfo);
     member_id = loginResult.userInfo;
   }
@@ -357,6 +408,7 @@ const view = async (req, res) => {
     isValid = req.query.article_no == undefined ? false : true;
   }
 
+  console.log(today + "======");
   console.log("article_no: " + req.query.article_no);
 
   if (isValid) {
@@ -378,6 +430,7 @@ const view = async (req, res) => {
 
     let clickCnt = articleOne[0].click_cnt + 1;
     let params = [clickCnt, articleNo];
+    console.log(today + "======");
     console.log("clickCnt: " + clickCnt);
     //click_cnt 업데이트
     const result = await mysql.query("articleClickUpdate", params);
@@ -411,8 +464,11 @@ const view = async (req, res) => {
 
 //게시글 상세보기
 const editForm = async (req, res) => {
+  const functionName = "editForm";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
   const mysql = require("../mysql/index.js");
-  console.log(jsName + "/editForm");
 
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
@@ -425,6 +481,11 @@ const editForm = async (req, res) => {
   let member_id;
   //let params;
 
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
+
   if (isValid) {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
@@ -435,6 +496,7 @@ const editForm = async (req, res) => {
   }
 
   if (isValid) {
+    console.log(today + "======");
     console.log("사용자 확인: " + loginResult.userInfo);
     member_id = loginResult.userInfo;
   }
@@ -483,7 +545,10 @@ const editForm = async (req, res) => {
 
 //글쓰기 update
 const update = async (req, res) => {
-  console.log(jsName + "/update");
+  const functionName = "update";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
 
   const mysql = require("../mysql/index.js");
 
@@ -498,6 +563,11 @@ const update = async (req, res) => {
   let member_id;
   //console.log(req.body);
 
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
+
   if (isValid) {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
@@ -508,6 +578,7 @@ const update = async (req, res) => {
   }
   if (isValid) {
     //사용자 확인
+    console.log(today + "======");
     console.log("사용자 확인: " + loginResult.userInfo);
     member_id = loginResult.userInfo;
   }
@@ -520,6 +591,7 @@ const update = async (req, res) => {
     //유효성 체크 : 숫자만 있는지 확인
     isValid = await validCheckModule.testRegex(/^\d+$/, req.body.article_no);
     articleNo = req.body.article_no;
+    console.log(today + "======");
     console.log("articleNo : " + articleNo);
   }
 
@@ -588,6 +660,7 @@ const update = async (req, res) => {
     );
      */
     const result = await mysql.query("articleUpdateOne", params);
+    console.log(today + "======");
     console.log(result);
     if (!result.affectedRows == 1) {
       isValid = false;
@@ -606,7 +679,10 @@ const update = async (req, res) => {
 
 //글쓰기 delete
 const deleteOne = async (req, res) => {
-  console.log(jsName + "/update");
+  const functionName = "deleteOne";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
 
   const mysql = require("../mysql/index.js");
 
@@ -621,6 +697,11 @@ const deleteOne = async (req, res) => {
   let member_id;
   //console.log(req.body);
 
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
+
   if (isValid) {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
@@ -631,6 +712,7 @@ const deleteOne = async (req, res) => {
   }
   if (isValid) {
     //사용자 확인
+    console.log(today + "======");
     console.log("사용자 확인: " + loginResult.userInfo);
     member_id = loginResult.userInfo;
   }
@@ -643,6 +725,7 @@ const deleteOne = async (req, res) => {
     //유효성 체크 : 숫자만 있는지 확인
     isValid = await validCheckModule.testRegex(/^\d+$/, req.query.article_no);
     articleNo = req.query.article_no;
+    console.log(today + "======");
     console.log("articleNo : " + articleNo);
   }
 
@@ -663,12 +746,14 @@ const deleteOne = async (req, res) => {
     //유효성 체크 : 숫자만 있는지 확인
     isValid = await validCheckModule.testRegex(/^\d+$/, req.query.board_no);
     board_no = req.query.board_no;
+    console.log(today + "======");
     console.log("board_no : " + board_no);
   }
 
   let params = ["Y", articleNo];
   if (isValid) {
     const result = await mysql.query("articleDeleteYnOne", params);
+    console.log(today + "======");
     console.log(result);
     if (!result.affectedRows == 1) {
       isValid = false;

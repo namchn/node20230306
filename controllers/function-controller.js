@@ -1,4 +1,4 @@
-const jsName = "/fuction";
+const jsName = "/function";
 
 // 시간 모먼트js
 const moment = require("moment");
@@ -8,6 +8,12 @@ const loginCheckModule = require("../modules/login/login-check");
 const session = require("../modules/session/session");
 //유효값 체크 모듈
 const validCheckModule = require("../modules/valid/valid");
+//암호화 모듈
+const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
+//카운트 모듈
+let moduleViewCount = require("../modules/count/viewCount");
+//현재시간
+let today = moment().format();
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -19,8 +25,16 @@ const { validationResult } = require("express-validator");
 
 const getTest = async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
-  console.log(jsName + "/get");
-  console.log("adress: " + "/get");
+  const functionName = "getTest";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
+  let isValid = true; //로직 통과 체크
+  let loginResult; //로그인 결과 체크
+  let redirectURL = "/login/loginHome"; //리다이렉트 주소
+  let falseRedirectURL = "/board/write"; //잘못되었을경우 리다이렉트 주소
+  let renderURL = "home/home2"; //랜딩 주소
+  let params = { title: "테스트 중입니다..", length: 5 };
   //res.redirect("/login/home.html");
   //res.send("result!!");
 
@@ -30,4 +44,30 @@ const getTest = async (req, res) => {
   });
 };
 
+const t1 = async (param) => {
+  //const result = await mysql.query("memberInsert", req.body.param);
+  const functionName = "t1";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log("param : " + param);
+  console.log(relativeUrl);
+  let isValid = true; //로직 통과 체크
+  let loginResult; //로그인 결과 체크
+  let redirectURL = "/login/loginHome"; //리다이렉트 주소
+  let falseRedirectURL = "/board/write"; //잘못되었을경우 리다이렉트 주소
+  let renderURL = "home/home2"; //랜딩 주소
+  let params = { title: "테스트 중입니다..", length: 5 };
+  //res.redirect("/login/home.html");
+  //res.send("result!!");
+
+  //res.send("t1 test");
+  /**
+  res.render("board/boardList", {
+    title: "나는 나는 남천우 입니다.",
+    length: 5,
+  });
+   */
+};
+
 exports.getTest = getTest;
+exports.t1 = t1;

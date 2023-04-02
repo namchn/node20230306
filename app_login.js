@@ -51,6 +51,7 @@ const loginRoute = require("./routes/login"); //product라우트 추가
 const testRoute = require("./routes/test"); //test라우트 추가
 
 const boardRoute = require("./routes/board"); //test라우트 추가
+const functionRoute = require("./routes/function"); //test라우트 추가
 
 //const productRoute = require("./routes/koreans");
 //productRoute();
@@ -59,7 +60,8 @@ app.use("/product", productRoute); //product 라우트를 추가하고 기본경
 app.use("/login", loginRoute); //login 라우트를 추가하고 기본경로로 /login 사용
 app.use("/test", testRoute); //test 라우트를 추가하고 기본경로로 /test 사용
 
-app.use("/board", boardRoute); //test 라우트를 추가하고 기본경로로 /test 사용
+app.use("/board", boardRoute); //board 라우트를 추가하고 기본경로로 /board 사용
+app.use("/function", functionRoute); //function 라우트를 추가하고 기본경로로 /function 사용
 
 //
 //
@@ -76,6 +78,11 @@ const mysql = require("./mysql/index.js");
 app.use("/xlsx", express.static("xlsx"));
 app.use("/login", express.static("login"));
 app.use("/client", express.static("client"));
+
+// 기본경로나 /user말고 다른곳 진입했을경우 실행
+app.use((req, res, next) => {
+  res.status(404).send("Not Found");
+});
 
 app.use(
   express.json({

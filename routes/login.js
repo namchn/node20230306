@@ -1,20 +1,19 @@
 const express = require("express");
 const router = express.Router();
+const cors = require("cors"); //cross-origin 요청
 
-//const bodyParser = require("body-parser");
-//router.use(bodyParser.urlencoded({ extended: true }));
+const jsName = "/login";
+const loginController = require("../controllers/login-controller");
+
+router.use(cors()); //cors 사용
 router.use(
   express.json({
     limit: "50mb", //
   })
 );
+//const bodyParser = require("body-parser");
+//router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.urlencoded({ extended: true }));
-
-const jsName = "/login";
-const loginController = require("../controllers/login-controller");
-
-//로그인 데이터를 가져오는 용도 test
-const { userList } = require("../model/user.js");
 
 //멤버 홈
 router.get("/loginHome", loginController.loginHome);

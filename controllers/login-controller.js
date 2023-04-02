@@ -10,6 +10,10 @@ const session = require("../modules/session/session");
 const validCheckModule = require("../modules/valid/valid");
 //암호화 모듈
 const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
+//카운트 모듈
+let moduleViewCount = require("../modules/count/viewCount");
+//현재시간
+let today = moment().format();
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -20,14 +24,21 @@ const { validationResult } = require("express-validator");
 //const Contents = require("../models/contents");
 
 const loginHome = async (req, res) => {
-  console.log(jsName + "/loginHome");
-
+  const functionName = "loginHome";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
   let falseRedirectURL = "/board/write"; //잘못되었을경우 리다이렉트 주소
   let renderURL = "home/home2"; //랜딩 주소
   let params = { title: "테스트 중입니다..", length: 5 };
+
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
 
   //const result = await mysql.query("memberInsert", req.body.param);
 
@@ -45,6 +56,7 @@ const loginHome = async (req, res) => {
 
   if (isValid) {
     //사용자 확인
+    console.log(today + "======");
     console.log(loginResult.userInfo);
   }
 
@@ -66,7 +78,10 @@ const loginHome = async (req, res) => {
 
 //멤버 가입 폼
 const joinForm = async (req, res) => {
-  console.log(jsName + "/joinForm");
+  const functionName = "joinForm";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
 
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
@@ -77,6 +92,10 @@ const joinForm = async (req, res) => {
   let params = { title: "테스트 중입니다..", length: 5 };
   //const result = await mysql.query("memberInsert", req.body.param);
 
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
   //res.redirect("/client/views/home/home.html");
   //res.send(result);
 
@@ -90,6 +109,7 @@ const joinForm = async (req, res) => {
   }
   if (isValid) {
     //사용자 확인
+    console.log(today + "======");
     console.log(loginResult.userInfo);
   }
 
@@ -112,7 +132,10 @@ const joinForm = async (req, res) => {
 
 //멤버 가입하기 로직
 const memberJoin = async (req, res) => {
-  console.log(jsName + "/memberJoin");
+  const functionName = "memberJoin";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
 
   const mysql = require("../mysql/index.js");
 
@@ -124,6 +147,11 @@ const memberJoin = async (req, res) => {
   //let renderURL = "board/articleList2"; //랜딩 주소
   let boardNo;
   let params;
+
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
   /**
   if (isValid) {
     //로그인 체크
@@ -164,6 +192,7 @@ const memberJoin = async (req, res) => {
 
   if (member_pw != member_pw2) {
     isValid = false;
+    console.log(today + "======");
     console.log(" 비밀번호가 다르다");
   }
 
@@ -171,6 +200,7 @@ const memberJoin = async (req, res) => {
   let createdCryptoPieces = await moduleSaltCrypto.createCryptoPassword(
     member_pw
   );
+  console.log(today + "======");
   console.log("암호화");
   console.log(createdCryptoPieces.password);
   console.log(createdCryptoPieces.salt);
@@ -184,12 +214,14 @@ const memberJoin = async (req, res) => {
     ];
     //아이디 중복 체크부분
     const checked = await mysql.query("memberListOne", member_id);
+    console.log(today + "======");
     console.log(checked.length + " : 아이디 중복");
     isValid = checked.length > 0 ? false : true;
   }
 
   if (isValid) {
     const result = await mysql.query("memberInsertOne", params);
+    console.log(today + "======");
     console.log(result.affectedRows);
     isValid = result.affectedRows != 1 ? false : true;
   }
@@ -205,10 +237,20 @@ const memberJoin = async (req, res) => {
 
 //멤버 로그인 확인
 const loginConfirm = async (req, res) => {
+  const functionName = "loginConfirm";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
+
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
   //로그인 확인
   let params = { title: "테스트 중입니다..", length: 5 };
+
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
 
   if (isValid) {
     //로그인 체크
@@ -220,6 +262,7 @@ const loginConfirm = async (req, res) => {
   }
   if (isValid) {
     //사용자 확인
+    console.log(today + "======");
     console.log(loginResult.userInfo);
   }
 
@@ -234,7 +277,10 @@ const loginConfirm = async (req, res) => {
 
 //멤버 로그인폼
 const loginForm = async (req, res) => {
-  console.log(jsName + "/loginForm");
+  const functionName = "loginForm";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
   //const mysql = require("../mysql/index.js");
 
   let isValid = true; //로직 통과 체크
@@ -246,6 +292,11 @@ const loginForm = async (req, res) => {
   //let boardNo;
   let params = { title: "테스트 중입니다..", length: 5 };
 
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
+
   if (isValid) {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
@@ -256,10 +307,12 @@ const loginForm = async (req, res) => {
   }
   if (isValid) {
     //사용자 확인
+    console.log(today + "======");
     console.log(loginResult.userInfo);
   }
 
   //session 확인
+  console.log(today + "======");
   console.log(session);
 
   //로그인 되었을 경우
@@ -273,7 +326,10 @@ const loginForm = async (req, res) => {
 
 //멤버 로그인 로직
 const memberLogin = async (req, res) => {
-  console.log(jsName + "/memberLogin");
+  const functionName = "memberLogin";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
 
   const mysql = require("../mysql/index.js");
 
@@ -285,6 +341,11 @@ const memberLogin = async (req, res) => {
   //let renderURL = "board/articleList2"; //랜딩 주소
   //let boardNo;
 
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
+
   if (isValid) {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
@@ -295,11 +356,12 @@ const memberLogin = async (req, res) => {
   }
   if (!isValid) {
     //사용자 확인
+    console.log(today + "======");
     console.log(loginResult.userInfo);
     redirectURL = redirectURL + "?msg=로그인되어있음.";
   }
 
-  console.log(req.body);
+  //console.log(req.body);
 
   //const { member_id, member_pw } = req.body;
 
@@ -318,8 +380,9 @@ const memberLogin = async (req, res) => {
 
   if (isValid) {
     const members = await mysql.query("memberOne", member_id);
+    console.log(today + "======");
     console.log(members);
-    console.log(members.length);
+    //console.log(members.length);
     isValid = members.length > 0 ? true : false;
 
     //복호화
@@ -328,6 +391,7 @@ const memberLogin = async (req, res) => {
         member_pw, //기입된 암호
         members[0].member_pw_salt //디비에서 가져온 솔트
       );
+      console.log(today + "======");
       console.log("복호화");
       console.log(gotCryptoPieces.password);
       console.log(gotCryptoPieces.salt);
@@ -376,6 +440,7 @@ const memberLogin = async (req, res) => {
     });
     */
 
+    console.log(today + "======");
     console.log("로그인 완료");
     res.redirect(redirectURL);
   } else {
@@ -393,7 +458,10 @@ const memberLogin = async (req, res) => {
 
 //멤버 로그아웃 로직
 const loginOut = async (req, res) => {
-  console.log(jsName + "/loginOut");
+  const functionName = "loginOut";
+  const relativeUrl = jsName + "/" + functionName;
+  console.log(today + "======");
+  console.log(relativeUrl);
   //const mysql = require("../mysql/index.js");
 
   let isValid = true; //로직 통과 체크
@@ -405,6 +473,11 @@ const loginOut = async (req, res) => {
 
   let params = { title: "테스트 중입니다..", length: 5 };
 
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
+
   if (isValid) {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
@@ -415,6 +488,7 @@ const loginOut = async (req, res) => {
   }
   if (isValid) {
     //사용자 확인
+    console.log(today + "======");
     console.log(loginResult.userInfo);
   }
 
