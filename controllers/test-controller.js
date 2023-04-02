@@ -1,5 +1,22 @@
 const jsName = "/test";
 
+// 시간 모먼트js
+const moment = require("moment");
+require("moment-timezone");
+//로그인 체크 모듈
+const loginCheckModule = require("../modules/login/login-check");
+//session 전역변수 선언
+const session = require("../modules/session/session");
+//유효값 체크 모듈
+const validCheckModule = require("../modules/valid/valid");
+//암호화 모듈
+const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
+//카운트 모듈
+let moduleViewCount = require("../modules/count/viewCount");
+//현재시간
+moment.tz.setDefault("Asia/Seoul");
+let today = moment().format();
+
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
 //const bcrypt = require("bcryptjs");
