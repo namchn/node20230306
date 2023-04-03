@@ -93,20 +93,34 @@ module.exports = {
   },
   articleList: {
     query:
-      "select * from article where board_no=? and delete_yn='N'  order by article_no desc LIMIT 1000",
+      "select * from article where board_no=? and delete_yn='N'  and board_no not in (10) order by article_no desc LIMIT 1000",
+  },
+  dailyArticleList: {
+    query:
+      "select * from article where writer_id=? and board_no=? and delete_yn='N'  order by article_no desc LIMIT 1000",
   },
   articleAdminList: {
     query:
       "select * from article where board_no=?  order by article_no desc LIMIT 1000",
   },
   articleView: {
-    query: "select * from article where article_no=? LIMIT 1000",
+    query:
+      "select * from article where article_no=? and board_no not in (9,10) LIMIT 1000",
+  },
+  dailyArticleView: {
+    query:
+      "select * from article where  article_no=? and writer_id=?  LIMIT 1000",
   },
   articleUpdateOne: {
     query:
       "update article set writer_nm=? , title=?  , text=?  , board_no=?  where article_no=?",
   },
+
   articleDeleteYnOne: {
     query: "update article set delete_yn=?   where article_no=?",
+  },
+  dailyArticleDeleteYnOne: {
+    query:
+      "update article set delete_yn=?   where article_no=?  and writer_id=? ",
   },
 };

@@ -1,4 +1,4 @@
-const jsName = "/board";
+const jsName = "/daily";
 
 // 시간 모먼트js
 const moment = require("moment");
@@ -25,91 +25,6 @@ const { validationResult } = require("express-validator");
 //const mongoose = require("mongoose");
 //const Contents = require("../models/contents");
 
-const getTest = async (req, res) => {
-  //const result = await mysql.query("memberInsert", req.body.param);
-  const functionName = "getTest";
-  const relativeUrl = jsName + "/" + functionName;
-  let today = moment().format();
-  console.log(today + "======");
-  console.log(relativeUrl);
-  //res.redirect("/login/home.html");
-  //res.send("result!!");
-
-  res.render("board/boardList", {
-    title: "나는 나는 남천우 입니다.",
-    length: 5,
-  });
-};
-
-const PostTest = async (req, res) => {
-  //const result = await mysql.query("memberInsert", req.body.param);
-  const functionName = "PostTest";
-  const relativeUrl = jsName + "/" + functionName;
-  let today = moment().format();
-  console.log(today + "======");
-  console.log(relativeUrl);
-  //res.redirect("/login/home.html");
-  //res.send("result!!");
-
-  res.render("board/boardList", {
-    title: "나는 나는 남천우 입니다.",
-    length: 5,
-  });
-};
-
-//
-const home = async (req, res) => {
-  //const result = await mysql.query("memberInsert", req.body.param);
-  const functionName = "home";
-  const relativeUrl = jsName + "/" + functionName;
-  let today = moment().format();
-  console.log(today + "======");
-  console.log(relativeUrl);
-  //res.redirect("/client/views/home/home.html");
-  //res.send(result);
-  res.render("home/home", {
-    title: "나는 나는 남천우 입니다.",
-    length: 5,
-  });
-};
-
-//멤버 리스트
-const memberList = async (req, res) => {
-  const functionName = "memberList";
-  const relativeUrl = jsName + "/" + functionName;
-  let today = moment().format();
-  console.log(today + "======");
-  console.log(relativeUrl);
-  const mysql = require("../mysql/index.js");
-  let params;
-
-  //console.log(req.query);
-  /** 
-    if (req.query == null) {
-      params = "1=1";
-    } else {
-      params = req.query;
-    }
-      */
-  params = "1=1";
-  //params = { member_id: "admin" };
-  const members = await mysql.query("memberList", params);
-
-  let memlist = [];
-  for (var i = 0; i < members.length; i++) {
-    console.log(members[i].member_id);
-    memlist.push(members[i].member_id);
-  }
-
-  res.render("board/userList", {
-    members: memlist,
-  });
-  //res.send(members);
-};
-
-/////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////
-
 //글쓰기 폼
 const writeForm = async (req, res) => {
   const functionName = "writeForm";
@@ -121,7 +36,7 @@ const writeForm = async (req, res) => {
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
-  let renderURL = "board/write"; //랜딩 주소
+  let renderURL = "daily/write"; //랜딩 주소
   //let articleList; //디비 결과
   let boardNo;
 
@@ -187,9 +102,9 @@ const insert = async (req, res) => {
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
   let articleList; //디비 결과
-  let redirectURL = "/board/list"; //리다이렉트 주소
-  let falseRedirectURL = "/board/write"; //잘못되었을경우 리다이렉트 주소
-  //let renderURL = "board/articleList2"; //랜딩 주소
+  let redirectURL = "/daily/list"; //리다이렉트 주소
+  let falseRedirectURL = "/daily/write"; //잘못되었을경우 리다이렉트 주소
+  //let renderURL = "daily/articleList2"; //랜딩 주소
   let writer_id;
 
   //url 뷰 카운트
@@ -280,6 +195,10 @@ const insert = async (req, res) => {
     }
   }
 
+  console.log(isValid);
+  console.log(redirectURL);
+  console.log("redirectURL");
+
   if (isValid) {
     redirectURL = redirectURL + "?board_no=" + board_no;
     res.redirect(redirectURL);
@@ -302,7 +221,7 @@ const writeList = async (req, res) => {
   let loginResult; //로그인 결과 체크
   let articleList; //디비 결과
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
-  let renderURL = "board/articleList2"; //랜딩 주소
+  let renderURL = "daily/articleList2"; //랜딩 주소
   let boardNo;
 
   //url 뷰 카운트
@@ -341,7 +260,10 @@ const writeList = async (req, res) => {
 
   if (isValid) {
     //디비 커넥션
-    articleList = await mysql.query("articleList", boardNo);
+    articleList = await mysql.query("dailyArticleList", [
+      loginResult.userInfo,
+      boardNo,
+    ]);
   }
 
   //params = { member_id: "admin" };
@@ -391,8 +313,8 @@ const view = async (req, res) => {
   let loginResult; //로그인 결과 체크
   let articleOne; //디비 결과
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
-  //let falseRedirectURL = "/board/write"; //잘못되었을경우 리다이렉트 주소
-  let renderURL = "board/view"; //랜딩 주소
+  //let falseRedirectURL = "/daily/write"; //잘못되었을경우 리다이렉트 주소
+  let renderURL = "daily/view"; //랜딩 주소
   let boardNo;
   let articleNo;
   let member_id;
@@ -436,7 +358,10 @@ const view = async (req, res) => {
   //params = { member_id: "admin" };
 
   if (isValid) {
-    articleOne = await mysql.query("articleView", articleNo);
+    articleOne = await mysql.query("dailyArticleView", [
+      articleNo,
+      loginResult.userInfo,
+    ]);
 
     isValid = articleOne.length > 0 ? true : false;
 
@@ -495,8 +420,8 @@ const editForm = async (req, res) => {
   let loginResult; //로그인 결과 체크
   let articleOne; //디비 결과
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
-  //let falseRedirectURL = "/board/write"; //잘못되었을경우 리다이렉트 주소
-  let renderURL = "board/edit"; //랜딩 주소
+  //let falseRedirectURL = "/daily/write"; //잘못되었을경우 리다이렉트 주소
+  let renderURL = "daily/edit"; //랜딩 주소
   let boardNo;
   let articleNo;
   let member_id;
@@ -531,7 +456,10 @@ const editForm = async (req, res) => {
 
   /**  */
   if (isValid) {
-    articleOne = await mysql.query("articleView", articleNo);
+    articleOne = await mysql.query("dailyArticleView", [
+      articleNo,
+      loginResult.userInfo,
+    ]);
     //console.log(articleOne[0].writer_id);
     //작성자와 접속자의 일치여부 확인
     isValid = member_id == articleOne[0].writer_id ? true : false;
@@ -578,9 +506,9 @@ const update = async (req, res) => {
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
   //let articleList; //디비 결과
-  let redirectURL = "/board/view"; //리다이렉트 주소
-  let falseRedirectURL = "/board/list"; //잘못되었을경우 리다이렉트 주소
-  //let renderURL = "board/articleList2"; //랜딩 주소
+  let redirectURL = "/daily/view"; //리다이렉트 주소
+  let falseRedirectURL = "/daily/list"; //잘못되었을경우 리다이렉트 주소
+  //let renderURL = "daily/articleList2"; //랜딩 주소
   //let boardNo;
   let articleNo;
   let member_id;
@@ -620,7 +548,10 @@ const update = async (req, res) => {
   }
 
   if (isValid) {
-    articleOne = await mysql.query("articleView", articleNo);
+    articleOne = await mysql.query("dailyArticleView", [
+      articleNo,
+      loginResult.userInfo,
+    ]);
     //console.log(articleOne[0].writer_id);
     //작성자와 접속자의 일치여부 확인
     isValid = member_id == articleOne[0].writer_id ? true : false;
@@ -714,9 +645,9 @@ const deleteOne = async (req, res) => {
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
   //let articleList; //디비 결과
-  let redirectURL = "/board/list"; //리다이렉트 주소
-  let falseRedirectURL = "/board/view"; //잘못되었을경우 리다이렉트 주소
-  //let renderURL = "board/articleList2"; //랜딩 주소
+  let redirectURL = "/daily/list"; //리다이렉트 주소
+  let falseRedirectURL = "/daily/view"; //잘못되었을경우 리다이렉트 주소
+  //let renderURL = "daily/articleList2"; //랜딩 주소
   //let boardNo;
   let articleNo;
   let member_id;
@@ -756,7 +687,10 @@ const deleteOne = async (req, res) => {
   }
 
   if (isValid) {
-    articleOne = await mysql.query("articleView", articleNo);
+    articleOne = await mysql.query("dailyArticleView", [
+      articleNo,
+      loginResult.userInfo,
+    ]);
     //console.log(articleOne[0].writer_id);
     //작성자와 접속자의 일치여부 확인
     isValid = member_id == articleOne[0].writer_id ? true : false;
@@ -776,9 +710,9 @@ const deleteOne = async (req, res) => {
     console.log("board_no : " + board_no);
   }
 
-  let params = ["Y", articleNo];
+  let params = ["Y", articleNo, loginResult.userInfo];
   if (isValid) {
-    const result = await mysql.query("articleDeleteYnOne", params);
+    const result = await mysql.query("dailyArticleDeleteYnOne", params);
     console.log(today + "======");
     console.log(result);
     if (!result.affectedRows == 1) {
@@ -796,10 +730,97 @@ const deleteOne = async (req, res) => {
   }
 };
 
-exports.getTest = getTest;
-exports.PostTest = PostTest;
-exports.home = home;
-exports.memberList = memberList;
+//게시글 리스트
+const dailyList = async (req, res) => {
+  const functionName = "dailyList";
+  const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
+  console.log(today + "======");
+  console.log(relativeUrl);
+
+  const mysql = require("../mysql/index.js");
+
+  let isValid = true; //로직 통과 체크
+  let loginResult; //로그인 결과 체크
+  let articleList; //디비 결과
+  let redirectURL = "/login/loginHome"; //리다이렉트 주소
+  let renderURL = "daily/articleList2"; //랜딩 주소
+  let boardNo;
+
+  //url 뷰 카운트
+  if (isValid) {
+    let re = moduleViewCount.urlViewCount(relativeUrl);
+  }
+
+  if (isValid) {
+    //쿼리값 확인
+    isValid = req.query.board_no == undefined ? false : true;
+    //boardNo = "12";
+    //console.log("ss"); // null
+    //res.redirect("/login/loginHome");
+  }
+
+  if (isValid) {
+    //로그인 체크
+    loginResult = await loginCheckModule.loginCheck(
+      req.headers.cookie,
+      session,
+      req.session.user
+    );
+    isValid = loginResult.isLogin ? true : false;
+  }
+
+  if (isValid) {
+    //유효성 체크 : 숫자만 있는지 확인
+    isValid = await validCheckModule.testRegex(/^\d+$/, req.query.board_no);
+    //const regex = /^\d+$/;
+    //a = req.query.board_no;
+    //c = a.match(regex);
+    //console.log(c); // null
+    boardNo = req.query.board_no;
+    //console.log(isValid + ": 유효값 - " + req.query.board_no);
+  }
+
+  if (isValid) {
+    //디비 커넥션
+    let user_id = loginResult.userInfo;
+    articleList = await mysql.query("dailyArticleList", [user_id, boardNo]);
+  }
+
+  //params = { member_id: "admin" };
+
+  /**
+  let list = [];
+  for (var i = 0; i < articleList.length; i++) {
+    //console.log(articleList[i].writer_nm);
+    list.push(articleList[i].writer_nm);
+  }
+   */
+
+  //
+  //로그인 확인
+
+  //const loginResult = await loginCheck(req.headers.cookie);
+
+  //로그인 되었을 경우
+
+  if (isValid) {
+    //res.render("home/home2", params);
+    //로그인이 되어 있을때만 리스트로 들어올 수 있다.
+    let params = { title: "테스트 중입니다..", length: 5 };
+    Object.assign(params, loginResult);
+    Object.assign(params, {
+      list: articleList,
+      moment,
+      board_no: boardNo,
+    });
+    res.render(renderURL, params);
+    //res.send(members);
+  } else {
+    res.redirect(redirectURL);
+  }
+};
+
 exports.writeForm = writeForm;
 exports.insert = insert;
 exports.writeList = writeList;
@@ -807,3 +828,4 @@ exports.view = view;
 exports.editForm = editForm;
 exports.update = update;
 exports.deleteOne = deleteOne;
+exports.dailyList = dailyList;

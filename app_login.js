@@ -47,11 +47,12 @@ app.use(bodyParser.json());
 //*router
 const customerRoute = require("./routes/customer"); //cutomer라우트 추가
 const productRoute = require("./routes/product"); //product라우트 추가
-const loginRoute = require("./routes/login"); //product라우트 추가
 const testRoute = require("./routes/test"); //test라우트 추가
 
-const boardRoute = require("./routes/board"); //test라우트 추가
-const functionRoute = require("./routes/function"); //test라우트 추가
+const loginRoute = require("./routes/login"); //product라우트 추가
+const boardRoute = require("./routes/board"); //board라우트 추가
+const dailyRoute = require("./routes/daily"); //daily라우트 추가
+const functionRoute = require("./routes/function"); //function라우트 추가
 
 //세션 모듈 사용
 const sessionModule = require("./modules/session/express-session");
@@ -78,10 +79,11 @@ app.use(session2(sessionObj));
 //productRoute();
 app.use("/customer", customerRoute); //customer 라우트를 추가하고 기본경로로 /customer 사용
 app.use("/product", productRoute); //product 라우트를 추가하고 기본경로로 /product 사용
-app.use("/login", loginRoute); //login 라우트를 추가하고 기본경로로 /login 사용
 app.use("/test", testRoute); //test 라우트를 추가하고 기본경로로 /test 사용
 
+app.use("/login", loginRoute); //login 라우트를 추가하고 기본경로로 /login 사용
 app.use("/board", boardRoute); //board 라우트를 추가하고 기본경로로 /board 사용
+app.use("/daily", dailyRoute); //daily 라우트를 추가하고 기본경로로 /daily 사용
 app.use("/function", functionRoute); //function 라우트를 추가하고 기본경로로 /function 사용
 
 //

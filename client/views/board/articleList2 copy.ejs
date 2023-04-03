@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=0.7" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>자유게시판 리스트</title>
     <link href="/client/css/style.css" rel="stylesheet" type="text/css" />
     <link href="/client/css/user.css" rel="stylesheet" type="text/css" />
@@ -51,7 +51,16 @@
           <a href="/board/list?board_no=<%=board_no %>">리스트</a>
         </div>
 
-        
+        <div class="number">
+          <div><</div>
+          <div class="select"><a href="/board/list?board_no=<%=board_no %>&articleLimit=1" >1</a></div>
+          <div><a href="/board/list?board_no=<%=board_no %>&articleLimit=2" >2</a></div>
+          <div><a href="/board/list?board_no=<%=board_no %>&articleLimit=3" >3</a></div>
+          <div><a href="/board/list?board_no=<%=board_no %>&articleLimit=4" >4</a></div>
+          <div><a href="/board/list?board_no=<%=board_no %>&articleLimit=5" >...</a></div>
+          <div>></div>
+        </div>
+      </div>
     </main>
 
     <!-- 템플릿 분리-->

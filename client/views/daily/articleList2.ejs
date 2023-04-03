@@ -26,8 +26,6 @@
           <tr>
             <th class="col1">번호</th>
             <th class="col2">제목</th>
-            <th class="col3">작성자</th>
-            <th class="col4">조회수</th>
             <th class="col5">작성일</th>
           </tr>
 
@@ -35,11 +33,10 @@
           <tr>
             <td><%=i+1 %></td>
             <td>
-              <a href="/board/view?article_no=<%=list[i].article_no %>"><%=list[i].title %></a
+              <a href="/daily/view?article_no=<%=list[i].article_no %>"><%=list[i].title %></a
               ><span> [<%=list[i].article_no %>]</span>
             </td>
-            <td><%=list[i].writer_nm %><img src="/client/etc/cho.png" class="face" /></td>
-            <td><%=list[i].click_cnt %></td>
+            
             <td><%=moment(list[i].create_dt).format('YYYY-MM-DD') %> </td>
           </tr>
           <% } %>
@@ -47,8 +44,8 @@
         </table>
 
         <div class="button">
-          <a href="/board/write?board_no=<%=board_no %>">글쓰기</a>
-          <a href="/board/list?board_no=<%=board_no %>">리스트</a>
+          <a href="/daily/write?board_no=<%=board_no %>">글쓰기</a>
+          <a href="/daily/list?board_no=<%=board_no %>">리스트</a>
         </div>
 
         

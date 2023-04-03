@@ -38,15 +38,15 @@
         <div class="button">
           <p>
             <% if (authYn ==true ) { %>
-            <a href="/board/edit?article_no=<%=article[0].article_no%>"
+            <a href="/daily/edit?article_no=<%=article[0].article_no%>"
               >글수정</a
             >
             <a
-              href="/board/delete?article_no=<%=article[0].article_no%>&board_no=<%=article[0].board_no%>"
+              href="/daily/delete?article_no=<%=article[0].article_no%>&board_no=<%=article[0].board_no%>"
               >글삭제</a
             >
             <% } %>
-            <a href="/board/list?board_no=<%=article[0].board_no%>">목록</a>
+            <a href="/daily/list?board_no=<%=article[0].board_no%>">목록</a>
           </p>
         </div>
       </form>
