@@ -162,13 +162,18 @@ const writeForm = async (req, res) => {
   }
 
   if (isValid) {
-    let params = { title: "테스트 중입니다..", length: 5 };
+    let params = {
+      title: "테스트 중입니다..",
+      length: 5,
+      writer_nm: loginResult.userNm,
+    };
     Object.assign(params, loginResult);
     Object.assign(params, {
       params,
       moment,
       board_no: boardNo,
     });
+
     res.render(renderURL, params);
   } else {
     res.redirect(redirectURL);

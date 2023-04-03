@@ -5,14 +5,14 @@ const cookie = require("cookie"); //cookie 모듈
 const loginCheck2 = async (getCookie, session, user) => {
   let isLogin = false;
   let userInfo = false;
+  let userNm = false;
 
   if (user) {
     isLogin = user.isLogin;
     userInfo = user.userInfo;
+    userNm = user.userNm;
     console.log("로그인 된 상태");
   } else {
-    isLogin = false;
-    userInfo = false;
     console.log("로그인 되지 않은 상태");
   }
   console.log(user);
@@ -20,24 +20,26 @@ const loginCheck2 = async (getCookie, session, user) => {
   return await {
     isLogin: isLogin,
     userInfo: userInfo,
+    userNm: userNm,
   };
 };
 
 //세션 모듈 사용
-const sessionModule = require("../session/express-session");
+//const sessionModule = require("../session/express-session");
 //app.use(sessionModule.session);
 
 //세션 생성
-const makeSession2 = async (reqSession, res, session, member_id) => {
+const makeSession2 = async (reqSession, res, session, member) => {
   let isLogin = false;
   let userInfo = false;
 
-  sessionModule.session;
+  //sessionModule.session;
 
   //
   reqSession.user = {
     isLogin: true,
-    userInfo: member_id,
+    userInfo: member.member_id,
+    userNm: member.member_nm,
   };
   console.log(reqSession.user);
 };

@@ -455,7 +455,7 @@ const memberLogin = async (req, res) => {
           req.session,
           res,
           session,
-          members[0].member_id
+          members[0]
         );
       } else {
         errMsg = "비밀번호가 다릅니다.";
