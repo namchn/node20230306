@@ -552,10 +552,16 @@ const update = async (req, res) => {
       articleNo,
       loginResult.userInfo,
     ]);
+    isValid = articleOne.length > 0 ? true : false;
+
     //console.log(articleOne[0].writer_id);
     //작성자와 접속자의 일치여부 확인
-    isValid = member_id == articleOne[0].writer_id ? true : false;
-    if (!isValid) console.log("작성자와 접속자가 일치하지 않음");
+    if (isValid) {
+      isValid = member_id == articleOne[0].writer_id ? true : false;
+      if (!isValid) {
+        console.log("작성자와 접속자가 일치하지 않음");
+      }
+    }
   }
 
   let writer_nm = req.body.writer_nm;
@@ -691,10 +697,16 @@ const deleteOne = async (req, res) => {
       articleNo,
       loginResult.userInfo,
     ]);
+    isValid = articleOne.length > 0 ? true : false;
+
     //console.log(articleOne[0].writer_id);
     //작성자와 접속자의 일치여부 확인
-    isValid = member_id == articleOne[0].writer_id ? true : false;
-    if (!isValid) console.log("작성자와 접속자가 일치하지 않음");
+    if (isValid) {
+      isValid = member_id == articleOne[0].writer_id ? true : false;
+      if (!isValid) {
+        console.log("작성자와 접속자가 일치하지 않음");
+      }
+    }
   }
 
   let board_no = req.query.board_no;
