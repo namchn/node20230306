@@ -3,6 +3,9 @@ const jsName = "/function";
 // 시간 모먼트js
 const moment = require("moment");
 require("moment-timezone");
+//현재시간
+moment.tz.setDefault("Asia/Seoul");
+
 //로그인 체크 모듈
 const loginCheckModule = require("../modules/login/login-check");
 //session 전역변수 선언
@@ -13,9 +16,6 @@ const validCheckModule = require("../modules/valid/valid");
 const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
 //카운트 모듈
 let moduleViewCount = require("../modules/count/viewCount");
-//현재시간
-moment.tz.setDefault("Asia/Seoul");
-let today = moment().format();
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -29,6 +29,7 @@ const getTest = async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
   const functionName = "getTest";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
   let isValid = true; //로직 통과 체크
@@ -50,6 +51,7 @@ const t1 = async (param) => {
   //const result = await mysql.query("memberInsert", req.body.param);
   const functionName = "t1";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log("param : " + param);
   console.log(relativeUrl);

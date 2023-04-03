@@ -53,6 +53,27 @@ const testRoute = require("./routes/test"); //test라우트 추가
 const boardRoute = require("./routes/board"); //test라우트 추가
 const functionRoute = require("./routes/function"); //test라우트 추가
 
+//세션 모듈 사용
+const sessionModule = require("./modules/session/express-session");
+app.use(sessionModule.session);
+
+/**
+const session2 = require("express-session");
+const MemoryStore = require("memorystore")(session2);
+const maxAge = 1000 * 60 * 39;
+const sessionObj = {
+  secret: "nam",
+  resave: false,
+  saveUninitialized: true,
+  store: new MemoryStore({ checkPeriod: maxAge }),
+  cookie: {
+    maxAge: maxAge,
+  },
+};
+app.use(session2(sessionObj));
+//router.use(session2(sessionObj));
+ */
+
 //const productRoute = require("./routes/koreans");
 //productRoute();
 app.use("/customer", customerRoute); //customer 라우트를 추가하고 기본경로로 /customer 사용

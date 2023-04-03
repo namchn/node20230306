@@ -3,6 +3,9 @@ const jsName = "/board";
 // 시간 모먼트js
 const moment = require("moment");
 require("moment-timezone");
+//현재시간
+moment.tz.setDefault("Asia/Seoul");
+
 //로그인 체크 모듈
 const loginCheckModule = require("../modules/login/login-check");
 //session 전역변수 선언
@@ -13,9 +16,6 @@ const validCheckModule = require("../modules/valid/valid");
 const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
 //카운트 모듈
 let moduleViewCount = require("../modules/count/viewCount");
-//현재시간
-moment.tz.setDefault("Asia/Seoul");
-let today = moment().format();
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -29,6 +29,7 @@ const getTest = async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
   const functionName = "getTest";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
   //res.redirect("/login/home.html");
@@ -44,6 +45,7 @@ const PostTest = async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
   const functionName = "PostTest";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
   //res.redirect("/login/home.html");
@@ -60,6 +62,7 @@ const home = async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
   const functionName = "home";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
   //res.redirect("/client/views/home/home.html");
@@ -74,6 +77,7 @@ const home = async (req, res) => {
 const memberList = async (req, res) => {
   const functionName = "memberList";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
   const mysql = require("../mysql/index.js");
@@ -110,6 +114,7 @@ const memberList = async (req, res) => {
 const writeForm = async (req, res) => {
   const functionName = "writeForm";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
 
@@ -129,7 +134,8 @@ const writeForm = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -173,6 +179,7 @@ const writeForm = async (req, res) => {
 const insert = async (req, res) => {
   const functionName = "insert";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
   const mysql = require("../mysql/index.js");
@@ -194,7 +201,8 @@ const insert = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -284,6 +292,7 @@ const insert = async (req, res) => {
 const writeList = async (req, res) => {
   const functionName = "writeList";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
 
@@ -313,7 +322,8 @@ const writeList = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -372,6 +382,7 @@ const writeList = async (req, res) => {
 const view = async (req, res) => {
   const functionName = "view";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
   const mysql = require("../mysql/index.js");
@@ -396,7 +407,8 @@ const view = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -470,6 +482,7 @@ const view = async (req, res) => {
 const editForm = async (req, res) => {
   const functionName = "editForm";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
   const mysql = require("../mysql/index.js");
@@ -494,7 +507,8 @@ const editForm = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -551,6 +565,7 @@ const editForm = async (req, res) => {
 const update = async (req, res) => {
   const functionName = "update";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
 
@@ -576,7 +591,8 @@ const update = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -685,6 +701,7 @@ const update = async (req, res) => {
 const deleteOne = async (req, res) => {
   const functionName = "deleteOne";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
 
@@ -710,7 +727,8 @@ const deleteOne = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }

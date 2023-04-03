@@ -3,6 +3,9 @@ const jsName = "/login";
 // 시간 모먼트js
 const moment = require("moment");
 require("moment-timezone");
+//현재시간
+moment.tz.setDefault("Asia/Seoul");
+
 //로그인 체크 모듈
 const loginCheckModule = require("../modules/login/login-check");
 //session 전역변수 선언
@@ -13,9 +16,6 @@ const validCheckModule = require("../modules/valid/valid");
 const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
 //카운트 모듈
 let moduleViewCount = require("../modules/count/viewCount");
-//현재시간
-moment.tz.setDefault("Asia/Seoul");
-let today = moment().format();
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -28,6 +28,7 @@ const { validationResult } = require("express-validator");
 const loginHome = async (req, res) => {
   const functionName = "loginHome";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
   let isValid = true; //로직 통과 체크
@@ -51,7 +52,8 @@ const loginHome = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -82,6 +84,7 @@ const loginHome = async (req, res) => {
 const joinForm = async (req, res) => {
   const functionName = "joinForm";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
 
@@ -105,7 +108,8 @@ const joinForm = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -136,6 +140,7 @@ const joinForm = async (req, res) => {
 const memberJoin = async (req, res) => {
   const functionName = "memberJoin";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
 
@@ -149,6 +154,7 @@ const memberJoin = async (req, res) => {
   //let renderURL = "board/articleList2"; //랜딩 주소
   let boardNo;
   let params;
+  let errMsg;
 
   //url 뷰 카운트
   if (isValid) {
@@ -159,7 +165,8 @@ const memberJoin = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -172,19 +179,35 @@ const memberJoin = async (req, res) => {
   let member_id = req.body.member_id;
   if (isValid) {
     isValid = req.body.member_id == undefined ? false : true;
+    if (!isValid) {
+      errMsg = "아이디 값이 없음";
+    }
   }
+
   let member_nm = req.body.member_nm;
   if (isValid) {
     isValid = req.body.member_nm == undefined ? false : true;
+    if (!isValid) {
+      errMsg = "이름이 없음";
+    }
   }
+
   let member_pw = req.body.member_pw;
   if (isValid) {
     isValid = req.body.member_pw == undefined ? false : true;
+    if (!isValid) {
+      errMsg = "패스워드가 없음";
+    }
   }
+
   let member_pw2 = req.body.member_pw2;
   if (isValid) {
     isValid = req.body.member_pw2 == undefined ? false : true;
+    if (!isValid) {
+      errMsg = "패스워드가 없음";
+    }
   }
+
   /**
   let member_pw_salt = req.body.member_pw_salt;
   if (isValid) {
@@ -192,10 +215,11 @@ const memberJoin = async (req, res) => {
   }
    */
 
-  if (member_pw != member_pw2) {
+  if (isValid && member_pw != member_pw2) {
     isValid = false;
     console.log(today + "======");
     console.log(" 비밀번호가 다르다");
+    errMsg = "위아래의 비밀번호가 다릅니다.";
   }
 
   //암호화
@@ -219,6 +243,10 @@ const memberJoin = async (req, res) => {
     console.log(today + "======");
     console.log(checked.length + " : 아이디 중복");
     isValid = checked.length > 0 ? false : true;
+
+    if (!isValid) {
+      errMsg = "중복된 아이디입니다. ";
+    }
   }
 
   if (isValid) {
@@ -226,6 +254,9 @@ const memberJoin = async (req, res) => {
     console.log(today + "======");
     console.log(result.affectedRows);
     isValid = result.affectedRows != 1 ? false : true;
+    if (!isValid) {
+      errMsg = "회원가입에 실패하였습니다 다시 시도하여 주십시오. ";
+    }
   }
 
   //console.log(" 비밀번호가 다르다 : " + isValid);
@@ -233,7 +264,16 @@ const memberJoin = async (req, res) => {
   if (isValid) {
     res.redirect(redirectURL);
   } else {
-    res.redirect(falseRedirectURL);
+    //가입 실패시 로직
+    if (errMsg) {
+      res.send(`
+      <script>
+        alert('${errMsg}')
+        location.href = '${falseRedirectURL}'
+      </script>`);
+    } else {
+      res.redirect(falseRedirectURL);
+    }
   }
 };
 
@@ -241,6 +281,7 @@ const memberJoin = async (req, res) => {
 const loginConfirm = async (req, res) => {
   const functionName = "loginConfirm";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
 
@@ -258,7 +299,8 @@ const loginConfirm = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -281,6 +323,7 @@ const loginConfirm = async (req, res) => {
 const loginForm = async (req, res) => {
   const functionName = "loginForm";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
   //const mysql = require("../mysql/index.js");
@@ -303,7 +346,8 @@ const loginForm = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -330,6 +374,7 @@ const loginForm = async (req, res) => {
 const memberLogin = async (req, res) => {
   const functionName = "memberLogin";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
 
@@ -340,6 +385,7 @@ const memberLogin = async (req, res) => {
   //let articleList; //디비 결과
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
   let falseRedirectURL = "/login/loginForm"; //잘못되었을경우 리다이렉트 주소
+  let errMsg;
   //let renderURL = "board/articleList2"; //랜딩 주소
   //let boardNo;
 
@@ -352,7 +398,8 @@ const memberLogin = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = !loginResult.isLogin ? true : false;
   }
@@ -360,7 +407,8 @@ const memberLogin = async (req, res) => {
     //사용자 확인
     console.log(today + "======");
     console.log(loginResult.userInfo);
-    redirectURL = redirectURL + "?msg=로그인되어있음.";
+    errMsg = "로그인되어있음.";
+    //redirectURL = redirectURL + "?msg=로그인되어있음.";
   }
 
   //console.log(req.body);
@@ -403,8 +451,18 @@ const memberLogin = async (req, res) => {
 
       if (isValid) {
         //세션 생성
-        await loginCheckModule.makeSession(res, session, members[0].member_id);
+        await loginCheckModule.makeSession(
+          req.session,
+          res,
+          session,
+          members[0].member_id
+        );
+      } else {
+        errMsg = "비밀번호가 다릅니다.";
+        //등록되지 않은 회원입니다.비밀번호가 다릅니다.
       }
+    } else {
+      errMsg = "등록되지 않은 회원입니다.";
     }
   }
 
@@ -447,14 +505,23 @@ const memberLogin = async (req, res) => {
     res.redirect(redirectURL);
   } else {
     /**
-  res.render(redirectPage, {
-    title: "나는 나는 남천우 입니다.",
-    length: 5,
-  });
+    res.render(redirectPage, {
+      title: "나는 나는 남천우 입니다.",
+      length: 5,
+    });
    */
-
     //res.send(members);
-    res.redirect(falseRedirectURL);
+    //res.redirect(falseRedirectURL);
+
+    if (errMsg) {
+      res.send(`
+      <script>
+        alert('${errMsg}')
+        location.href = '${falseRedirectURL}'
+      </script>`);
+    } else {
+      res.redirect(falseRedirectURL);
+    }
   }
 };
 
@@ -462,6 +529,7 @@ const memberLogin = async (req, res) => {
 const loginOut = async (req, res) => {
   const functionName = "loginOut";
   const relativeUrl = jsName + "/" + functionName;
+  let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
   //const mysql = require("../mysql/index.js");
@@ -484,7 +552,8 @@ const loginOut = async (req, res) => {
     //로그인 체크
     loginResult = await loginCheckModule.loginCheck(
       req.headers.cookie,
-      session
+      session,
+      req.session.user
     );
     isValid = loginResult.isLogin ? true : false;
   }
@@ -498,7 +567,7 @@ const loginOut = async (req, res) => {
   Object.assign(params, loginResult);
   if (isValid) {
     //로그아웃
-    await loginCheckModule.deletSession(req, res, session);
+    await loginCheckModule.deleteSession(req, res, session);
     res.redirect(redirectURL);
   } else {
     res.redirect(falseRedirectURL);

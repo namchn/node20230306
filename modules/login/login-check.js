@@ -1,7 +1,58 @@
 const cookie = require("cookie"); //cookie 모듈
 
+/**  */
 //세션 체크
-const loginCheck = async (getCookie, session) => {
+const loginCheck2 = async (getCookie, session, user) => {
+  let isLogin = false;
+  let userInfo = false;
+
+  if (user) {
+    isLogin = user.isLogin;
+    userInfo = user.userInfo;
+    console.log("로그인 된 상태");
+  } else {
+    isLogin = false;
+    userInfo = false;
+    console.log("로그인 되지 않은 상태");
+  }
+  console.log(user);
+
+  return await {
+    isLogin: isLogin,
+    userInfo: userInfo,
+  };
+};
+
+//세션 모듈 사용
+const sessionModule = require("../session/express-session");
+//app.use(sessionModule.session);
+
+//세션 생성
+const makeSession2 = async (reqSession, res, session, member_id) => {
+  let isLogin = false;
+  let userInfo = false;
+
+  sessionModule.session;
+
+  //
+  reqSession.user = {
+    isLogin: true,
+    userInfo: member_id,
+  };
+  console.log(reqSession.user);
+};
+//세션 삭제
+const deleteSession2 = async (req, res, session) => {
+  req.session.destroy(() => {
+    req.session;
+  });
+  console.log(req.session);
+};
+
+/////////위쪽은 session-express 를 이용한 session 사용
+
+//세션 체크
+const loginCheck = async (getCookie, session, user) => {
   let isLogin = false;
   let userInfo = false;
   if (getCookie) {
@@ -23,7 +74,6 @@ const loginCheck = async (getCookie, session) => {
       isLogin = false;
       console.log("로그인 되지 않은 상태");
     }
-    isLogin: true;
   }
   return await {
     isLogin: isLogin,
@@ -65,7 +115,7 @@ const loginCheck = async (param) => {
  */
 
 //세션 생성 : 암호화가 필요함.
-const makeSession = async (res, session, member_id) => {
+const makeSession = async (reqSession, res, session, member_id) => {
   let isLogin = false;
   let userInfo = false;
 
@@ -105,7 +155,7 @@ const makeSession = async (res, session, member_id) => {
 };
 
 //세션 삭제
-const deletSession = async (req, res, session) => {
+const deleteSession = async (req, res, session) => {
   console.log(session);
   const cookies = cookie.parse(req.headers.cookie);
   //console.log(cookies["connect.id"]); // cookie 모듈을 통해 헤더를 파싱한 결과 출력
@@ -120,6 +170,10 @@ const deletSession = async (req, res, session) => {
   res.clearCookie("connect.id");
 };
 
-exports.loginCheck = loginCheck;
-exports.makeSession = makeSession;
-exports.deletSession = deletSession;
+exports.loginCheck = loginCheck2;
+exports.makeSession = makeSession2;
+exports.deleteSession = deleteSession2;
+
+//exports.loginCheck = loginCheck;
+//exports.makeSession = makeSession;
+//exports.deleteSession = deleteSession;
