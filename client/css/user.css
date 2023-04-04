@@ -26,6 +26,13 @@
   box-sizing: border-box;
 }
 
+.forth {
+  border: 1px solid brown;
+  flex: 1;
+  width: 30%;
+  box-sizing: border-box;
+}
+
 .center {
   text-align: center;
 }

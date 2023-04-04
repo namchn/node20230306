@@ -5,6 +5,9 @@ const cors = require("cors"); //cross-origin 요청
 const jsName = "/function";
 const functionController = require("../controllers/function-controller");
 
+//카운트 모듈
+let moduleXlsx = require("../modules/fileStore/xlsx");
+
 router.use(cors()); //cors 사용
 router.use(
   express.json({
@@ -52,20 +55,30 @@ router.use((error, req, res, next) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
-//멤버 가입폼 @
-router.get("/", async (req, res) => {
-  //const result = await mysql.query("memberInsert", req.body.param);
-  console.log(jsName + "/");
-  //res.redirect("/login/home.html");
-  //res.send("result!");
-  res.render("board/boardList", {
-    title: "나는 나는 남천우 입니다.",
-    length: 5,
-  });
-});
-
 //기능 설정
-router.get("/get", functionController.getTest);
+router.get("/", functionController.getTest);
+
+//엑셀내용 저장 기능
+router.get("/xlsx", functionController.xlsxStored);
+
+//엑셀에서 디비로 저장 폼
+router.get("/xlsxToDbForm", functionController.xlsxToDbForm);
+
+//엑셀에서 디비로 저장 기능
+router.post(
+  "/xlsxToDB",
+  functionController.uploadSingle(),
+  functionController.xlsxToDB
+);
+
+//엑셀 디비에서 다운로드 기능
+router.get("/xlsxDownload", functionController.xlsxDownload);
+
+//엑셀 디비에서 다운로드 기능
+router.get("/xlsxFileDownload", functionController.xlsxFileDownload);
+
+//scheduling
+//router.get("/xlsxFileDownload", functionController.scheduling);
 
 //모듈 주입
 module.exports = router;

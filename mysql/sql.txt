@@ -158,7 +158,14 @@ CREATE TABLE `article` (
 
 
 
-
+CREATE TABLE `customers` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `email` varchar(45) NOT NULL,
+  `phone` varchar(45) NOT NULL,
+  `address` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb3;
 
 
 

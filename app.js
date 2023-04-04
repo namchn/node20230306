@@ -8,7 +8,7 @@ const port = 3000;
 
 app.use(
   session({
-    secret: "secre code",
+    secret: "secret code",
     resave: false,
     saveUninitialized: false,
     cookie: {

@@ -262,7 +262,13 @@ const memberJoin = async (req, res) => {
   //console.log(" 비밀번호가 다르다 : " + isValid);
 
   if (isValid) {
-    res.redirect(redirectURL);
+    errMsg = "축하합니다. 가입되었습니다!";
+    res.send(`
+      <script>
+        alert('${errMsg}')
+        location.href = '${redirectURL}'
+      </script>`);
+    //res.redirect(redirectURL);
   } else {
     //가입 실패시 로직
     if (errMsg) {
@@ -502,7 +508,14 @@ const memberLogin = async (req, res) => {
 
     console.log(today + "======");
     console.log("로그인 완료");
-    res.redirect(redirectURL);
+    errMsg = "로그인 하셨군요 반갑습니다.";
+
+    res.send(`
+      <script>
+        alert('${errMsg}')
+        location.href = '${redirectURL}'
+      </script>`);
+    // res.redirect(redirectURL);
   } else {
     /**
     res.render(redirectPage, {
@@ -540,7 +553,7 @@ const loginOut = async (req, res) => {
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
   let falseRedirectURL = "/login/loginHome"; //잘못되었을경우 리다이렉트 주소
   //let renderURL = "board/articleList2"; //랜딩 주소
-
+  let errMsg;
   let params = { title: "테스트 중입니다..", length: 5 };
 
   //url 뷰 카운트
@@ -568,7 +581,13 @@ const loginOut = async (req, res) => {
   if (isValid) {
     //로그아웃
     await loginCheckModule.deleteSession(req, res, session);
-    res.redirect(redirectURL);
+    errMsg = "다시 돌아와요~~ㅠㅠ";
+    //res.redirect(redirectURL);
+    res.send(`
+      <script>
+        alert('${errMsg}')
+        location.href = '${redirectURL}'
+      </script>`);
   } else {
     res.redirect(falseRedirectURL);
     //res.render("login/loginForm", params);
