@@ -77,6 +77,9 @@ router.get("/xlsxDownload", functionController.xlsxDownload);
 //엑셀 디비에서 다운로드 기능
 router.get("/xlsxFileDownload", functionController.xlsxFileDownload);
 
+//구글 메일
+router.post("/mailing", functionController.mailing);
+
 //scheduling
 //router.get("/xlsxFileDownload", functionController.scheduling);
 

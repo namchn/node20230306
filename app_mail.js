@@ -9,8 +9,8 @@ app.use(
   })
 ); // 클라이언트 요청 body를 json으로 파싱 처리
 
-app.listen(3000, () => {
-  console.log("Server started. port 3000");
+app.listen(3002, () => {
+  console.log("Server started. port 3002");
 });
 
 app.get("/", (req, res) => {

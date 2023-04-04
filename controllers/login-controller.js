@@ -16,6 +16,8 @@ const validCheckModule = require("../modules/valid/valid");
 const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
 //카운트 모듈
 let moduleViewCount = require("../modules/count/viewCount");
+//메일 모듈
+let moduleMailing = require("../modules/mailing/google_mail");
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -487,6 +489,37 @@ const memberLogin = async (req, res) => {
     }
   }
    */
+
+  //세션을 만든후 다시 로그인 되었는지 확인
+  if (isValid) {
+    //로그인 체크
+    loginResult = await loginCheckModule.loginCheck(
+      req.headers.cookie,
+      session,
+      req.session.user
+    );
+    isValid = loginResult.isLogin ? true : false;
+  }
+
+  if (isValid) {
+    //메일링 기능 추가
+
+    console.log(loginResult);
+
+    let subjectStr =
+      "안녕하세요" + loginResult.userInfo + " 사용자가 로그인 하였습니다.";
+    let textStr = loginResult.userInfo + " 사용자가 로그인 하였습니다.";
+
+    let params = {
+      from: "ncware@gmail.com",
+      to: "chunwoo84@hanmail.net",
+      subject: subjectStr,
+      text: textStr,
+    };
+    const r = await moduleMailing.googleMail(params);
+    console.log("r:");
+    console.log(r);
+  }
 
   if (isValid) {
     //로그인 성공시

@@ -18,9 +18,10 @@ const validCheckModule = require("../modules/valid/valid");
 const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
 //카운트 모듈
 let moduleViewCount = require("../modules/count/viewCount");
-
-//카운트 모듈
+//엑셀 모듈
 let moduleXlsx = require("../modules/fileStore/xlsx");
+//메일 모듈
+let moduleMailing = require("../modules/mailing/google_mail");
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -242,6 +243,35 @@ const xlsxFileDownload = async (req, res, next) => {
   //res.redirect("/")
 };
 
+//메일링 서비스
+const mailing = async (req, res, next) => {
+  // moduleMailing,googleMail
+
+  /**
+  req.body.param = {
+    "param": 
+        {
+        "from": "ncware@gmail.com",
+        "to": "likencw@naver.com",
+        "subject": "안녕2",
+        "text": "방가워요2"
+        }
+  }
+  */
+  let params = {
+    from: "ncware@gmail.com",
+    to: "likencw@naver.com",
+    subject: "안녕하세요",
+    text: "반갑습니다.",
+  };
+
+  const r = await moduleMailing.googleMail(params);
+  console.log("r:");
+  console.log(r);
+  //const r = await nodemailer.send(req.body.param);
+  res.send(r); //결과를 클라이언트로 보냄
+};
+
 exports.getTest = getTest;
 exports.t1 = t1;
 exports.xlsxStored = xlsxStored;
@@ -251,4 +281,5 @@ exports.uploadSingle = uploadSingle;
 exports.xlsxToDB = xlsxToDB;
 exports.xlsxDownload = xlsxDownload;
 exports.xlsxFileDownload = xlsxFileDownload;
+exports.mailing = mailing;
 //exports.scheduling = scheduling
