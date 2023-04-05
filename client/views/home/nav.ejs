@@ -36,21 +36,37 @@
       <li><a href="/board/list?board_no=11">자유게시판</a></li>
       <li><a href="/board/list?board_no=12">자유게시판2</a></li>
     </ul>
+    <% } %>
 
     <!-- 어드민 -->
-    <% } %> <% if (isLogin ==true ) { %>
+    <% if (isLogin ==true ) { %>
     <ul>
-      <li><a href="/function/xlsxToDbForm">디비로 엑셀 업로드(beta)</a></li>
-      <!--
-      <li><a href="/function/xlsxDownload">디비에서 엑셀 다운로드(beta)</a></li>
-      -->
       <li>
         <a href="/function/xlsxFileDownload"
-          >디비에서 엑셀파일 다운로드(beta)</a
+          >디비정보를 엑셀파일로 다운로드받기(customers)</a
         >
       </li>
+    </ul>
+    <% } %>
 
-      <li><a href="/">예정(beta)</a></li>
+    <!-- 어드민 -->
+    <% if (isLogin ==true && userInfo == 'salt') { %>
+    <ul>
+      <li><a href="/function/mysql">디비에서 내용 출력</a></li>
+      <li><a href="/function/xlsxToDbForm">디비로 엑셀 업로드</a></li>
+      <li>
+        <a href="/function/xlsxDownload">디비에서 서버내로 엑셀 다운로드</a>
+      </li>
+      <li>
+        <a href="/function/xlsxFileDownload"
+          >디비정보를 엑셀파일로 다운로드받기(customers)</a
+        >
+      </li>
+      <li>
+        <a href="/function/scheduling3"
+          >메일이 정기적으로 가도록 함(스케쥴링).(beta)</a
+        >
+      </li>
     </ul>
     <% } %>
   </div>

@@ -301,16 +301,18 @@ const scheduling1 = async (req, res, next) => {
 const scheduling3 = async (req, res, next) => {
   const schedulingtimes = "0 * * * * *";
   //const schedulingtimes = "0,5,10,15,20,25,30,35,40,45,50,55 * * * * *";
+  let count = 0;
 
   const actionFc = async () => {
     let today = moment().format();
+    count++;
 
-    console.log(today);
+    console.log(count + ": 메일링 함수 호출 시각:" + today);
     //내용
     let params = {
       from: "ncware@gmail.com",
       to: "chunwoo84@hanmail.net",
-      subject: "안녕하세요",
+      subject: "안녕하세요 :" + count,
       text: "반갑습니다. 시간이 " + today,
     };
     //const r = await moduleMailing.googleMail(params);
