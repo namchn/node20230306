@@ -333,6 +333,60 @@ const scheduling3 = async (req, res, next) => {
   res.send(result);
 };
 
+//apiSubway
+/////////////////// 공공 아이피 활용 ///////////////
+const request = require("request");
+//const { resolve } = require("path");
+const apiSubway = async (req, res) => {
+  //개발자 코드
+  const Encode =
+    "wfphOlaaSHfPq4wIst51%2BDyGAmkWwW9%2Bng8eYEDpc47eMhQrNOoyKbzD29SvqTlTEJlAq7ZZ5Q72INkBFX6uaA%3D%3D";
+  //한 페이지 결과 수 //페이지 번호 //출발역 코드 //도착역 코드//주중.토.일//
+  const options = {
+    uri:
+      "http://apis.data.go.kr/B553766/smt-path/path?serviceKey=" +
+      Encode +
+      "&numOfRows=10&pageNo=1&dept_station_code=0222&dest_station_code=4117&week=DAY",
+    method: "GET",
+    body: {
+      priority: "high",
+    },
+    json: true,
+  };
+  //
+
+  const result = async () => {
+    return new Promise((resolve) => {
+      request.get(options, function (err, resquest, body) {
+        //callback
+        if (err) {
+          return console.log(err);
+        }
+        //console.log(body.data);
+        resolve(body.data);
+        //return body.data;
+      });
+    });
+  };
+
+  const api = await result();
+  const apiRoute = api.route;
+  //console.log(apiRoute);
+  let trlist = [];
+  for (var i = 0; i < apiRoute.length; i++) {
+    //console.log(apiRoute[i].station_nm);
+    trlist.push(apiRoute[i].station_nm);
+  }
+
+  /** 
+  res.render("trainList", {
+    trlist: apiRoute,
+  });
+   */
+
+  res.send(api);
+};
+
 exports.getTest = getTest;
 exports.t1 = t1;
 exports.xlsxStored = xlsxStored;
@@ -346,3 +400,4 @@ exports.mailing = mailing;
 exports.mysql = mysql;
 exports.scheduling1 = scheduling1;
 exports.scheduling3 = scheduling3;
+exports.apiSubway = apiSubway;

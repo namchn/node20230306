@@ -88,5 +88,8 @@ router.get("/scheduling3", functionController.scheduling3);
 //mysql 테스트
 router.get("/mysql", functionController.mysql);
 
+//공공 api subway 가져오기
+router.get("/api/subway", functionController.apiSubway);
+
 //모듈 주입
 module.exports = router;
