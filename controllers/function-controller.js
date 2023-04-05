@@ -333,8 +333,7 @@ const scheduling3 = async (req, res, next) => {
   res.send(result);
 };
 
-//apiSubway
-/////////////////// 공공 아이피 활용 ///////////////
+//공공 아이피 활용 //
 const request = require("request");
 //const { resolve } = require("path");
 const apiSubway = async (req, res) => {
