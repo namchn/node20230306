@@ -6,4 +6,4 @@
 
 실제로 배포하여 운영하는 주소입니다.
 :
-https://port-0-node20230306-p8xrq2mlfw6c21c.sel3.cloudtype.app/
+https://port-0-node2023-3j5jwm62alg3i5c0s.sel3.cloudtype.app/
