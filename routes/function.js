@@ -80,8 +80,13 @@ router.get("/xlsxFileDownload", functionController.xlsxFileDownload);
 //구글 메일
 router.post("/mailing", functionController.mailing);
 
-//scheduling
-//router.get("/xlsxFileDownload", functionController.scheduling);
+//scheduling1
+router.get("/scheduling1", functionController.scheduling1);
+//scheduling3
+router.get("/scheduling3", functionController.scheduling3);
+
+//mysql 테스트
+router.get("/mysql", functionController.mysql);
 
 //모듈 주입
 module.exports = router;

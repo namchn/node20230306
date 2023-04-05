@@ -1,5 +1,7 @@
 const jsName = "/board";
 
+//경로 모듈
+const path = require("path");
 // 시간 모먼트js
 const moment = require("moment");
 require("moment-timezone");
@@ -14,101 +16,16 @@ const session = require("../modules/session/session");
 const validCheckModule = require("../modules/valid/valid");
 //암호화 모듈
 const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
+//mysql 모듈
+const moduleMysql = require("../modules/dbconnection/mysql/mysql");
 //카운트 모듈
 let moduleViewCount = require("../modules/count/viewCount");
+//엑셀 모듈
+let moduleXlsx = require("../modules/fileStore/xlsx");
+//메일 모듈
+let moduleMailing = require("../modules/mailing/google_mail");
 
-const HttpError = require("../modules/http-error");
-const { validationResult } = require("express-validator");
-//const bcrypt = require("bcryptjs");
-//const jwt = require("jsonwebtoken");
-//const User = require("../models/user");
-//const mongoose = require("mongoose");
-//const Contents = require("../models/contents");
-
-const getTest = async (req, res) => {
-  //const result = await mysql.query("memberInsert", req.body.param);
-  const functionName = "getTest";
-  const relativeUrl = jsName + "/" + functionName;
-  let today = moment().format();
-  console.log(today + "======");
-  console.log(relativeUrl);
-  //res.redirect("/login/home.html");
-  //res.send("result!!");
-
-  res.render("board/boardList", {
-    title: "나는 나는 남천우 입니다.",
-    length: 5,
-  });
-};
-
-const PostTest = async (req, res) => {
-  //const result = await mysql.query("memberInsert", req.body.param);
-  const functionName = "PostTest";
-  const relativeUrl = jsName + "/" + functionName;
-  let today = moment().format();
-  console.log(today + "======");
-  console.log(relativeUrl);
-  //res.redirect("/login/home.html");
-  //res.send("result!!");
-
-  res.render("board/boardList", {
-    title: "나는 나는 남천우 입니다.",
-    length: 5,
-  });
-};
-
-//
-const home = async (req, res) => {
-  //const result = await mysql.query("memberInsert", req.body.param);
-  const functionName = "home";
-  const relativeUrl = jsName + "/" + functionName;
-  let today = moment().format();
-  console.log(today + "======");
-  console.log(relativeUrl);
-  //res.redirect("/client/views/home/home.html");
-  //res.send(result);
-  res.render("home/home", {
-    title: "나는 나는 남천우 입니다.",
-    length: 5,
-  });
-};
-
-//멤버 리스트
-const memberList = async (req, res) => {
-  const functionName = "memberList";
-  const relativeUrl = jsName + "/" + functionName;
-  let today = moment().format();
-  console.log(today + "======");
-  console.log(relativeUrl);
-  const mysql = require("../mysql/index.js");
-  let params;
-
-  //console.log(req.query);
-  /** 
-    if (req.query == null) {
-      params = "1=1";
-    } else {
-      params = req.query;
-    }
-      */
-  params = "1=1";
-  //params = { member_id: "admin" };
-  const members = await mysql.query("memberList", params);
-
-  let memlist = [];
-  for (var i = 0; i < members.length; i++) {
-    console.log(members[i].member_id);
-    memlist.push(members[i].member_id);
-  }
-
-  res.render("board/userList", {
-    members: memlist,
-  });
-  //res.send(members);
-};
-
-/////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
 //글쓰기 폼
 const writeForm = async (req, res) => {
@@ -149,11 +66,7 @@ const writeForm = async (req, res) => {
   if (isValid) {
     //쿼리값 확인
     isValid = req.query.board_no == undefined ? false : true;
-    //boardNo = "12";
-    //console.log("ss"); // null
-    //res.redirect("/login/loginHome");
   }
-  //const result = await mysql.query("memberInsert", req.body.param);
 
   if (isValid) {
     //유효성 체크 : 숫자만 있는지 확인
@@ -187,7 +100,6 @@ const insert = async (req, res) => {
   let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
-  const mysql = require("../mysql/index.js");
 
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
@@ -196,6 +108,7 @@ const insert = async (req, res) => {
   let falseRedirectURL = "/board/write"; //잘못되었을경우 리다이렉트 주소
   //let renderURL = "board/articleList2"; //랜딩 주소
   let writer_id;
+  let errMsg;
 
   //url 뷰 카운트
   if (isValid) {
@@ -219,8 +132,6 @@ const insert = async (req, res) => {
     writer_id = loginResult.userInfo;
   }
 
-  //console.log(req.body);
-
   let writer_nm = req.body.writer_nm;
   if (isValid) {
     isValid = req.body.writer_nm == undefined ? false : true;
@@ -242,42 +153,11 @@ const insert = async (req, res) => {
     isValid = await validCheckModule.testRegex(/^\d+$/, req.body.board_no);
   }
 
-  // -->아이디 중복 체크부분
-  /** 
-    const checked = await mysql.query("memberListOne", member_id);
-    if (checked.length > 0) {
-      console.log(checked.length + " : 아이디 중복");
-      res.redirect(redirectPage);
-    } else {
-      const result = await mysql.query("articleInsertOne", params);
-      if (result) {
-        console.log(result);
-        redirectPage = "/home";
-        res.redirect(redirectPage);
-        //res.send(result);
-      } else {
-        res.redirect(redirectPage);
-      }
-    }
-    */
-
-  //체크
-  /**
-  const checked = await mysql.query("articleList", board_no);
-  console.log(checked);
-  console.log(
-    "insert 전 board_no가 " +
-      board_no +
-      "번 게시판의 글갯수 확인 : " +
-      checked.length
-  );
-   */
-
-  //게시글 데이터 인서트
+  //게시글  인서트
   if (isValid) {
     let params = [writer_id, writer_nm, title, text, board_no];
-    const result = await mysql.query("articleInsertOne", params);
-    //console.log("result: " + result);
+    const result = await moduleMysql.query("articleInsertOne", params);
+
     if (result.affectedRows == 1) {
       console.log(result);
     } else {
@@ -287,7 +167,15 @@ const insert = async (req, res) => {
 
   if (isValid) {
     redirectURL = redirectURL + "?board_no=" + board_no;
-    res.redirect(redirectURL);
+
+    errMsg = "글이 작성되었습니다.";
+    res.send(`
+      <script>
+        alert('${errMsg}')
+        location.href = '${redirectURL}'
+      </script>`);
+
+    //res.redirect(redirectURL);
   } else {
     res.redirect(falseRedirectURL);
   }
@@ -300,8 +188,6 @@ const writeList = async (req, res) => {
   let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
-
-  const mysql = require("../mysql/index.js");
 
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
@@ -318,9 +204,6 @@ const writeList = async (req, res) => {
   if (isValid) {
     //쿼리값 확인
     isValid = req.query.board_no == undefined ? false : true;
-    //boardNo = "12";
-    //console.log("ss"); // null
-    //res.redirect("/login/loginHome");
   }
 
   if (isValid) {
@@ -341,15 +224,12 @@ const writeList = async (req, res) => {
     //c = a.match(regex);
     //console.log(c); // null
     boardNo = req.query.board_no;
-    //console.log(isValid + ": 유효값 - " + req.query.board_no);
   }
 
   if (isValid) {
     //디비 커넥션
-    articleList = await mysql.query("articleList", boardNo);
+    articleList = await moduleMysql.query("articleList", boardNo);
   }
-
-  //params = { member_id: "admin" };
 
   /**
   let list = [];
@@ -359,15 +239,8 @@ const writeList = async (req, res) => {
   }
    */
 
-  //
-  //로그인 확인
-
-  //const loginResult = await loginCheck(req.headers.cookie);
-
   //로그인 되었을 경우
-
   if (isValid) {
-    //res.render("home/home2", params);
     //로그인이 되어 있을때만 리스트로 들어올 수 있다.
     let params = { title: "테스트 중입니다..", length: 5 };
     Object.assign(params, loginResult);
@@ -390,7 +263,6 @@ const view = async (req, res) => {
   let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
-  const mysql = require("../mysql/index.js");
 
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
@@ -441,7 +313,7 @@ const view = async (req, res) => {
   //params = { member_id: "admin" };
 
   if (isValid) {
-    articleOne = await mysql.query("articleView", articleNo);
+    articleOne = await moduleMysql.query("articleView", articleNo);
 
     isValid = articleOne.length > 0 ? true : false;
 
@@ -457,7 +329,7 @@ const view = async (req, res) => {
       console.log(today + "======");
       console.log("clickCnt: " + clickCnt);
       //click_cnt 업데이트
-      const result = await mysql.query("articleClickUpdate", params);
+      const result = await moduleMysql.query("articleClickUpdate", params);
     }
   }
 
@@ -487,14 +359,13 @@ const view = async (req, res) => {
   //res.send(members);
 };
 
-//게시글 상세보기
+//게시글 수정폼
 const editForm = async (req, res) => {
   const functionName = "editForm";
   const relativeUrl = jsName + "/" + functionName;
   let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
-  const mysql = require("../mysql/index.js");
 
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
@@ -536,8 +407,8 @@ const editForm = async (req, res) => {
 
   /**  */
   if (isValid) {
-    articleOne = await mysql.query("articleView", articleNo);
-    //console.log(articleOne[0].writer_id);
+    articleOne = await moduleMysql.query("articleView", articleNo);
+
     //작성자와 접속자의 일치여부 확인
     isValid = member_id == articleOne[0].writer_id ? true : false;
     if (!isValid) console.log("작성자와 접속자가 일치하지 않음");
@@ -578,8 +449,6 @@ const update = async (req, res) => {
   console.log(today + "======");
   console.log(relativeUrl);
 
-  const mysql = require("../mysql/index.js");
-
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
   //let articleList; //디비 결과
@@ -589,7 +458,7 @@ const update = async (req, res) => {
   //let boardNo;
   let articleNo;
   let member_id;
-  //console.log(req.body);
+  let errMsg;
 
   //url 뷰 카운트
   if (isValid) {
@@ -625,10 +494,9 @@ const update = async (req, res) => {
   }
 
   if (isValid) {
-    articleOne = await mysql.query("articleView", articleNo);
+    articleOne = await moduleMysql.query("articleView", articleNo);
     isValid = articleOne.length > 0 ? true : false;
 
-    //console.log(articleOne[0].writer_id);
     //작성자와 접속자의 일치여부 확인
     if (isValid) {
       isValid = member_id == articleOne[0].writer_id ? true : false;
@@ -664,37 +532,10 @@ const update = async (req, res) => {
 
   let params = [writer_nm, title, text, board_no, articleNo];
 
-  // -->아이디 중복 체크부분
-
-  /** 
-    const checked = await mysql.query("memberListOne", member_id);
-    if (checked.length > 0) {
-      console.log(checked.length + " : 아이디 중복");
-      res.redirect(redirectPage);
-    } else {
-      const result = await mysql.query("articleInsertOne", params);
-      if (result) {
-        console.log(result);
-        redirectPage = "/home";
-        res.redirect(redirectPage);
-        //res.send(result);
-      } else {
-        res.redirect(redirectPage);
-      }
-    }
-    */
-
+  //글 수정
   if (isValid) {
-    /**
-    const checked = await mysql.query("articleList", board_no);
-    console.log(
-      "insert 전 board_no가 " +
-        board_no +
-        "번 게시판의 글갯수 확인 : " +
-        checked.length
-    );
-     */
-    const result = await mysql.query("articleUpdateOne", params);
+    const result = await moduleMysql.query("articleUpdateOne", params);
+
     console.log(today + "======");
     console.log(result);
     if (!result.affectedRows == 1) {
@@ -704,8 +545,14 @@ const update = async (req, res) => {
 
   if (isValid) {
     redirectURL = redirectURL + "?article_no=" + articleNo;
-    res.redirect(redirectURL);
-    //res.send(result);
+
+    errMsg = "글이 수정되었습니다.";
+    res.send(`
+      <script>
+        alert('${errMsg}')
+        location.href = '${redirectURL}'
+      </script>`);
+    //res.redirect(redirectURL);
   } else {
     falseRedirectURL = falseRedirectURL + "?board_no=" + board_no;
     res.redirect(falseRedirectURL);
@@ -720,8 +567,6 @@ const deleteOne = async (req, res) => {
   console.log(today + "======");
   console.log(relativeUrl);
 
-  const mysql = require("../mysql/index.js");
-
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
   //let articleList; //디비 결과
@@ -731,7 +576,7 @@ const deleteOne = async (req, res) => {
   //let boardNo;
   let articleNo;
   let member_id;
-  //console.log(req.body);
+  let errMsg;
 
   //url 뷰 카운트
   if (isValid) {
@@ -767,10 +612,9 @@ const deleteOne = async (req, res) => {
   }
 
   if (isValid) {
-    articleOne = await mysql.query("articleView", articleNo);
+    articleOne = await moduleMysql.query("articleView", articleNo);
     isValid = articleOne.length > 0 ? true : false;
 
-    //console.log(articleOne[0].writer_id);
     //작성자와 접속자의 일치여부 확인
     if (isValid) {
       isValid = member_id == articleOne[0].writer_id ? true : false;
@@ -795,7 +639,8 @@ const deleteOne = async (req, res) => {
 
   let params = ["Y", articleNo];
   if (isValid) {
-    const result = await mysql.query("articleDeleteYnOne", params);
+    const result = await moduleMysql.query("articleDeleteYnOne", params);
+
     console.log(today + "======");
     console.log(result);
     if (!result.affectedRows == 1) {
@@ -805,18 +650,19 @@ const deleteOne = async (req, res) => {
 
   if (isValid) {
     redirectURL = redirectURL + "?board_no=" + board_no;
-    res.redirect(redirectURL);
-    //res.send(result);
+    errMsg = "글이 삭제되었습니다.";
+    res.send(`
+      <script>
+        alert('${errMsg}')
+        location.href = '${redirectURL}'
+      </script>`);
+    //res.redirect(redirectURL);
   } else {
     falseRedirectURL = falseRedirectURL + "?article_no=" + articleNo;
     res.redirect(falseRedirectURL);
   }
 };
 
-exports.getTest = getTest;
-exports.PostTest = PostTest;
-exports.home = home;
-exports.memberList = memberList;
 exports.writeForm = writeForm;
 exports.insert = insert;
 exports.writeList = writeList;

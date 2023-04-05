@@ -13,6 +13,6 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/api/test", async (req, res) => {
-  const customers = await mysql.query("sellerList");
+  const customers = await mysql.query("customerList");
   res.send(customers);
 });

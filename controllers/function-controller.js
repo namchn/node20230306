@@ -16,12 +16,16 @@ const session = require("../modules/session/session");
 const validCheckModule = require("../modules/valid/valid");
 //암호화 모듈
 const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
+//mysql 모듈
+const moduleMysql = require("../modules/dbconnection/mysql/mysql");
 //카운트 모듈
 let moduleViewCount = require("../modules/count/viewCount");
 //엑셀 모듈
 let moduleXlsx = require("../modules/fileStore/xlsx");
 //메일 모듈
 let moduleMailing = require("../modules/mailing/google_mail");
+//스케쥴 모듈
+let modulescheduling = require("../modules/scheduling/scheduling");
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -272,6 +276,61 @@ const mailing = async (req, res, next) => {
   res.send(r); //결과를 클라이언트로 보냄
 };
 
+// mysql 디비 연결
+const mysql = async (req, res, next) => {
+  //const mysql = require("../mysql/index.js");
+  const params = "salt";
+  //const result = await moduleMysql.mysql("customerList", params);
+  const result = await moduleMysql.query("memberOne", params);
+  //const customers = await mysql.query("customerList");
+  //
+  res.send(result);
+};
+
+//scheduling1
+const scheduling1 = async (req, res, next) => {
+  const schedulingtimes = "0,5,10,15,20,25,30,35,40,45,50,55 * * * * *";
+  const action = "5초마다 작업을 실행합니다.";
+  const re = modulescheduling.scheduling1(schedulingtimes, action);
+
+  const result = "salt";
+  res.send(result);
+};
+
+//scheduling
+const scheduling3 = async (req, res, next) => {
+  const schedulingtimes = "0 * * * * *";
+  //const schedulingtimes = "0,5,10,15,20,25,30,35,40,45,50,55 * * * * *";
+
+  const actionFc = async () => {
+    let today = moment().format();
+
+    console.log(today);
+    //내용
+    let params = {
+      from: "ncware@gmail.com",
+      to: "chunwoo84@hanmail.net",
+      subject: "안녕하세요",
+      text: "반갑습니다. 시간이 " + today,
+    };
+    //const r = await moduleMailing.googleMail(params);
+    const action = "1분마다 메일을 보냅니다.";
+
+    console.log(action);
+    try {
+      let response = await moduleMailing.googleMail(params);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //실행함수
+  const re = modulescheduling.scheduling3(schedulingtimes, actionFc);
+
+  const result = "salt";
+  res.send(result);
+};
+
 exports.getTest = getTest;
 exports.t1 = t1;
 exports.xlsxStored = xlsxStored;
@@ -282,4 +341,6 @@ exports.xlsxToDB = xlsxToDB;
 exports.xlsxDownload = xlsxDownload;
 exports.xlsxFileDownload = xlsxFileDownload;
 exports.mailing = mailing;
-//exports.scheduling = scheduling
+exports.mysql = mysql;
+exports.scheduling1 = scheduling1;
+exports.scheduling3 = scheduling3;

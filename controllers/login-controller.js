@@ -1,5 +1,7 @@
 const jsName = "/login";
 
+//경로 모듈
+const path = require("path");
 // 시간 모먼트js
 const moment = require("moment");
 require("moment-timezone");
@@ -14,18 +16,16 @@ const session = require("../modules/session/session");
 const validCheckModule = require("../modules/valid/valid");
 //암호화 모듈
 const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
+//mysql 모듈
+const moduleMysql = require("../modules/dbconnection/mysql/mysql");
 //카운트 모듈
 let moduleViewCount = require("../modules/count/viewCount");
+//엑셀 모듈
+let moduleXlsx = require("../modules/fileStore/xlsx");
 //메일 모듈
 let moduleMailing = require("../modules/mailing/google_mail");
 
-const HttpError = require("../modules/http-error");
-const { validationResult } = require("express-validator");
-//const bcrypt = require("bcryptjs");
-//const jwt = require("jsonwebtoken");
-//const User = require("../models/user");
-//const mongoose = require("mongoose");
-//const Contents = require("../models/contents");
+/////////////////////////////////////////////////////////////////////
 
 const loginHome = async (req, res) => {
   const functionName = "loginHome";
@@ -45,10 +45,7 @@ const loginHome = async (req, res) => {
     let re = moduleViewCount.urlViewCount(relativeUrl);
   }
 
-  //const result = await mysql.query("memberInsert", req.body.param);
-
   //res.redirect("/client/views/home/home.html");
-  //res.send(result);
 
   if (isValid) {
     //로그인 체크
@@ -77,9 +74,7 @@ const loginHome = async (req, res) => {
   //res.render("login/signForm", params);
 
   //console.log(jsName + "/member/memberJoinForm");
-  //const result = await mysql.query("memberInsert", req.body.param);
   //res.redirect("/login/joinForm.html");
-  //res.send(result);
 };
 
 //멤버 가입 폼
@@ -97,7 +92,6 @@ const joinForm = async (req, res) => {
   //let falseRedirectURL = "/board/write"; //잘못되었을경우 리다이렉트 주소
   let renderURL = "login/signForm"; //랜딩 주소
   let params = { title: "테스트 중입니다..", length: 5 };
-  //const result = await mysql.query("memberInsert", req.body.param);
 
   //url 뷰 카운트
   if (isValid) {
@@ -133,9 +127,7 @@ const joinForm = async (req, res) => {
   //res.render("login/signForm", params);
 
   //console.log(jsName + "/member/memberJoinForm");
-  //const result = await mysql.query("memberInsert", req.body.param);
   //res.redirect("/login/joinForm.html");
-  //res.send(result);
 };
 
 //멤버 가입하기 로직
@@ -145,8 +137,6 @@ const memberJoin = async (req, res) => {
   let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
-
-  const mysql = require("../mysql/index.js");
 
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
@@ -241,7 +231,8 @@ const memberJoin = async (req, res) => {
       createdCryptoPieces.salt,
     ];
     //아이디 중복 체크부분
-    const checked = await mysql.query("memberListOne", member_id);
+
+    const checked = await moduleMysql.query("memberListOne", member_id);
     console.log(today + "======");
     console.log(checked.length + " : 아이디 중복");
     isValid = checked.length > 0 ? false : true;
@@ -252,7 +243,7 @@ const memberJoin = async (req, res) => {
   }
 
   if (isValid) {
-    const result = await mysql.query("memberInsertOne", params);
+    const result = await moduleMysql.query("memberInsertOne", params);
     console.log(today + "======");
     console.log(result.affectedRows);
     isValid = result.affectedRows != 1 ? false : true;
@@ -334,7 +325,6 @@ const loginForm = async (req, res) => {
   let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
-  //const mysql = require("../mysql/index.js");
 
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
@@ -386,8 +376,6 @@ const memberLogin = async (req, res) => {
   console.log(today + "======");
   console.log(relativeUrl);
 
-  const mysql = require("../mysql/index.js");
-
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크
   //let articleList; //디비 결과
@@ -437,10 +425,9 @@ const memberLogin = async (req, res) => {
   }
 
   if (isValid) {
-    const members = await mysql.query("memberOne", member_id);
+    const members = await moduleMysql.query("memberOne", member_id);
     console.log(today + "======");
     console.log(members);
-    //console.log(members.length);
     isValid = members.length > 0 ? true : false;
 
     //복호화
@@ -503,8 +490,6 @@ const memberLogin = async (req, res) => {
 
   if (isValid) {
     //메일링 기능 추가
-
-    console.log(loginResult);
 
     let subjectStr =
       "안녕하세요" + loginResult.userInfo + " 사용자가 로그인 하였습니다.";
@@ -578,7 +563,6 @@ const loginOut = async (req, res) => {
   let today = moment().format();
   console.log(today + "======");
   console.log(relativeUrl);
-  //const mysql = require("../mysql/index.js");
 
   let isValid = true; //로직 통과 체크
   let loginResult; //로그인 결과 체크

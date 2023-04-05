@@ -99,14 +99,13 @@ const mysql = require("./mysql/index.js");
 
 //정적파일 경로 설정
 app.use("/xlsx", express.static("xlsx"));
-app.use("/login", express.static("login"));
 app.use("/client", express.static("client"));
 
 app.use(
   express.json({
-    limit: "50mb", //
+    limit: "50mb", //최대 50메가
   })
-);
+); // 클라이언트 요청 body를 json으로 파싱 처리
 
 app.listen(port, () => {
   console.log("Server started. port " + port);

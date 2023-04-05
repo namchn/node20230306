@@ -51,8 +51,6 @@ let passwordStr = "pw1234";
 
 //const path = require("path");
 
-//console.log("머라도 하겠지.");
-
 //console.log(__dirname);
 
 //console.log(__filename);

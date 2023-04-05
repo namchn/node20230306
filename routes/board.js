@@ -15,17 +15,6 @@ router.use(
 //router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.urlencoded({ extended: true }));
 
-//멤버 가입폼 @
-router.get("/get", boardController.getTest);
-
-//멤버 가입폼 @
-router.get("/home", boardController.home);
-
-//멤버 전체 검색@
-router.get("/memberList", boardController.memberList);
-
-/////////////////////////////////////////////////
-
 //글쓰기 폼
 router.get("/write", boardController.writeForm);
 
@@ -34,9 +23,6 @@ router.post("/insert", boardController.insert);
 
 //글쓰기 post
 router.get("/edit", boardController.editForm);
-
-//글쓰기 post
-router.post("/post", boardController.PostTest);
 
 //글목록
 router.get("/list", boardController.writeList);

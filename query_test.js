@@ -1,4 +1,4 @@
-let sql = require("./mysql/sql.js");
+let sql = require("./mysql/sqlbox/sql.js");
 
 const db = {
   //database: "dev_class",
@@ -7,12 +7,19 @@ const db = {
   //user: "root",
   //password: "mariadb",
 
+  //connectionLimit: 10,
+  //host: "127.0.0.1",
+  //port: "3306",
+  //user: "dev02",
+  //password: "1234",
+  //database: "dev_class",
+
   connectionLimit: 10,
   host: "127.0.0.1",
   port: "3306",
-  user: "dev02",
+  user: "dev01",
   password: "1234",
-  database: "dev_class",
+  database: "node",
 };
 const dbPool = require("mysql").createPool(db);
 
