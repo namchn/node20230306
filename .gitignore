@@ -4,3 +4,5 @@ devnote.txt
 /client/etc/html1/
 /_set/system_setting.json.sample
 /_set/system_setting.json
+app_api.js
+app_login.js.bak

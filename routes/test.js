@@ -18,17 +18,6 @@ router.use(
   })
 );
 
-const HttpError = require("../modules/http-error");
-// https://velog.io/@yunsungyang-omc/Node.js-express%EC%97%90%EC%84%9C-%EC%97%90%EB%9F%AC%EB%A1%9C-HTTP-status-code-%ED%86%B5%EC%A0%9C%ED%95%98%EA%B8%B0
-
-/*  
-router.use((req, res, next) => {
-  const error = new HttpError("경로를 찾을 수 없습니다.", 404);
-  throw error;
-  //next(error);
-});
-*/
-
 router.use(express.urlencoded({ extended: true }));
 
 router.use((error, req, res, next) => {
@@ -51,6 +40,15 @@ router.get("/ejs", async (req, res) => {
     length: 5,
   });
 });
+
+/////////////////////////////////////////////////////////
+const fs = require("fs"); //파일시스템
+const path = require("path");
+const multer = require("multer");
+const xlsx = require("xlsx");
+require("dotenv").config({ path: "mysql/.env" });
+const mysql = require("../mysql/index.js");
+/////////////////////////////////////////////////////////
 
 router.post("/", async (req, res) => {
   //const customers = await mysql.query("sellerList");
@@ -88,7 +86,10 @@ router.get("/log", async (req, res) => {
 router.get("/home", async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
   console.log(jsName + "/home");
-  res.redirect("/client/login/home.html");
+  //res.redirect("/client/login/home.html");
+  let homePath = path.join(__dirname + "/../client/login/home.html");
+  //res.send("result");
+  res.sendFile(homePath);
   //res.send(result);
 });
 
@@ -287,6 +288,122 @@ router.post("/member/memberRecoverOne", async (req, res) => {
   const result = await mysql.query("memberRecoverOne", req.body.param);
   res.send(result);
 });
+
+/**
+//아이디 클릭수 체크
+router.post("/member/click", async (req, res) => {
+  let member_id = req.body.member_id;
+  let click_no = "1";
+
+  if (member_id == "") {
+    res.redirect("/home");
+  } else {
+    const result = await mysql.query("memberClickOne", member_id);
+
+    console.log(result[0].click_no);
+
+    if (result.length == 0) {
+      let params = [member_id, click_no];
+      const clickInsert = await mysql.query("memberClickInsert", params);
+    } else {
+      click_no = result[0].click_no + 1;
+      let params = [click_no, member_id];
+      const clickUpdate = await mysql.query("memberClickUpdate", params);
+    }
+
+    console.log(
+      "아이디 " + member_id + "의 카운트 :" + (result[0].click_no + 1)
+    );
+    //res.redirect("/home");
+
+    fs.readFile("./login/home.html", "utf8", function (err, buf) {
+      res.send(buf);
+    });
+
+    //res.send("아이디 " + member_id + "의 카운트 :" + (result[0].click_no + 1));
+  }
+});
+ */
+
+//아이디 클릭수 체크
+router.post("/member/click", async (req, res) => {
+  let member_id = req.body.member_id;
+  let click_no = "1";
+
+  if (member_id == "") {
+    res.redirect("/home");
+  } else {
+    const result = await mysql.query("memberClickOne", member_id);
+
+    let clickNo = 1;
+    if (result.length == 0) {
+      let params = [member_id, click_no];
+      const clickInsert = await mysql.query("memberClickInsert", params);
+    } else {
+      console.log(result[0].click_no);
+      click_no = result[0].click_no + 1;
+      let params = [click_no, member_id];
+      const clickUpdate = await mysql.query("memberClickUpdate", params);
+
+      clickNo = result[0].click_no + 1;
+      console.log("아이디 " + member_id + "의 카운트 :" + clickNo);
+    }
+
+    //res.redirect("/home");
+
+    /** 
+    fs.readFile("./login/home.html", "utf8", function (err, buf) {
+      res.send(buf);
+    });
+    */
+
+    //res.send("아이디 " + member_id + "의 카운트 :" + (result[0].click_no + 1));
+
+    res.render("home", {
+      member_id: member_id,
+      click_no: clickNo,
+      length: 5,
+    });
+    //res.redirect("/home");
+  }
+});
+
+//멤버 전체 검색@
+router.get("/member/memberList", async (req, res) => {
+  let params;
+  console.log(req.query);
+  /** 
+  if (req.query == null) {
+    params = "1=1";
+  } else {
+    params = req.query;
+  }
+  */
+  params = "1=1";
+  const members = await mysql.query("memberList", params);
+
+  let memlist = [];
+  for (var i = 0; i < members.length; i++) {
+    console.log(members[i].member_id);
+    memlist.push(members[i].member_id);
+  }
+
+  res.render("userList", {
+    members: memlist,
+  });
+  //res.send(members);
+});
+
+router.get("/a", async (req, res) => {
+  //
+  res.sendFile(__dirname + "/login/home.html");
+});
+
+router.get("/b", async (req, res) => {
+  //
+  res.sendFile(__dirname + "/login/write.html");
+});
+
 /////////////////////아래는 예시 ////////////////////////////////
 
 //로그인 정보 조회를 위한 라우트
