@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express(); //클라이언트에서 HTTP요청 메소드 GET 방식으로 'host:port'를 호출했을 때
-const port = 3000;
+const port = 3002;
+
+const path = require("path");
 
 //라우트
 const customerRoute = require("./routes/customer");
@@ -15,7 +17,7 @@ app.use(
 );
 
 app.listen(port, () => {
-  console.log("Server started. port 3000");
+  console.log("Server started. port 3002");
 });
 
 //암호 모듈
@@ -81,7 +83,7 @@ let filePath = "./modules/text.txt";
 })();
 
 /*비동기 글쓰기*/
-let data = "파일 데이터 쓰기";
+let data = "파일 데이터 쓰기1";
 let filePath2 = "./modules/text_w.txt";
 
 /**
@@ -118,8 +120,8 @@ fs.watchFile(updateSql, (curr, prev) => {
  */
 
 /*파일변경 감시하는 함수*/
-let sqlPath = "./mysql/sql.js";
-let updateSql = __dirname + "/sql.js";
+let sqlPath = "./mysql/sqlbox/sql.js";
+let updateSql = path.join(__dirname, "/mysql/sqlbox/sql.js");
 let sql = require(updateSql); //데이터 베이스 쿼리문이 작성되어 있는 파일
 (async () => {
   let moduleWatchFileResult = await moduleFs.watchFile(updateSql, sql);

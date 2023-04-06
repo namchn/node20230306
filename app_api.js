@@ -1,26 +1,29 @@
 const express = require("express");
 const app = express();
 
-//*설정값 가져오기
+//설정값 가져오기
 const { setPort } = require("./modules/setting/setting");
 const port = setPort["value"];
 
 //cross-origin 요청: 다른 서버의 요청을 가능하게 함
-const cors = require("cors"); //Cross-Origin Resource Sharing
 // https://velog.io/@cptkuk91/Node.js-CORS-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0
+const cors = require("cors");
 //app.use(cors());
 
-//*라우트별 사용
+//라우트별 사용
 var corsOptions = {
   origin: "*", //http://example.com
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
-app.get("/cors", cors(corsOptions), function (req, res, next) {
+//app.get("/cors", cors(corsOptions), function (req, res) {
+app.get("/cors", cors(corsOptions), function (req, res) {
   res.json({ msg: "This is CORS-enabled for a Single Route" });
 });
+
 /*
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
@@ -29,7 +32,7 @@ app.use((req, res, next) => {
 });
 */
 
-//*요청 body 파싱
+// 요청 body 파싱
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -38,22 +41,20 @@ app.use(bodyParser.json());
 //const cookieParser = require("cookie-parser");
 //app.use(cookieParser());
 
-//*정적파일 접근 경로 설정
-app.use("/xlsx", express.static("xlsx"));
-app.use("/client", express.static("client"));
+//정적파일 접근
 // app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
-app.use(
-  express.json({
-    limit: "50mb", //최대 50메가
-  })
-); // 클라이언트 요청 body를 json으로 파싱 처리
+//*router
+const customerRoute = require("./routes/customer"); //cutomer라우트 추가
+const productRoute = require("./routes/product"); //product라우트 추가
+const testRoute = require("./routes/test"); //test라우트 추가
 
-app.listen(port, () => {
-  console.log("Server started. port " + port);
-});
+const loginRoute = require("./routes/login"); //product라우트 추가
+const boardRoute = require("./routes/board"); //board라우트 추가
+const dailyRoute = require("./routes/daily"); //daily라우트 추가
+const functionRoute = require("./routes/function"); //function라우트 추가
 
-//*세션 모듈 사용
+//세션 모듈 사용
 const sessionModule = require("./modules/session/express-session");
 app.use(sessionModule.session);
 
@@ -74,50 +75,52 @@ app.use(session2(sessionObj));
 //router.use(session2(sessionObj));
  */
 
-//*router
-const customerRoute = require("./routes/customer"); //cutomer라우트 추가
-const productRoute = require("./routes/product"); //product라우트 추가
-const loginRoute = require("./routes/login"); //product라우트 추가
-const boardRoute = require("./routes/board"); //board라우트 추가
-const dailyRoute = require("./routes/daily"); //daily라우트 추가
-const functionRoute = require("./routes/function"); //function라우트 추가
-const testRoute = require("./routes/test"); //test라우트 추가
-
-//*라우터 설정
 //const productRoute = require("./routes/koreans");
 //productRoute();
 app.use("/customer", customerRoute); //customer 라우트를 추가하고 기본경로로 /customer 사용
 app.use("/product", productRoute); //product 라우트를 추가하고 기본경로로 /product 사용
-app.use("/test", cors(), testRoute); //test 라우트를 추가하고 기본경로로 /test 사용
-app.use("/login", cors(), loginRoute); //login 라우트를 추가하고 기본경로로 /login 사용
-app.use("/board", cors(), boardRoute); //board 라우트를 추가하고 기본경로로 /board 사용
-app.use("/daily", cors(), dailyRoute); //daily 라우트를 추가하고 기본경로로 /daily 사용
-app.use("/function", cors(), functionRoute); //function 라우트를 추가하고 기본경로로 /function 사용
+app.use("/test", testRoute); //test 라우트를 추가하고 기본경로로 /test 사용
 
-/////////////////////////////////////////////////////////
-//뷰pug 템플릿
-//app.set("view engine", "pug");
-//app.set("views", "views");
-//const home = (req, res) => res.render("main");
-//app.get("/main", home);
+app.use("/login", loginRoute); //login 라우트를 추가하고 기본경로로 /login 사용
+app.use("/board", boardRoute); //board 라우트를 추가하고 기본경로로 /board 사용
+app.use("/daily", dailyRoute); //daily 라우트를 추가하고 기본경로로 /daily 사용
+app.use("/function", functionRoute); //function 라우트를 추가하고 기본경로로 /function 사용
 
-//app.engine("html", require("ejs").renderFile);
-//app.set("view engine", "html");
+//
+//
+//
+const fs = require("fs"); //파일시스템
 
-//템플릿 설정
-const ejs = require("ejs");
-app.engine("html", require("ejs").renderFile);
-app.set("view engine", "ejs");
-//app.set("view engine", "ejs");
-app.set("views", "./client/views");
-/////////////////////////////////////////////////////////
+const multer = require("multer");
+const path = require("path");
+const xlsx = require("xlsx");
+require("dotenv").config({ path: "mysql/.env" });
+const mysql = require("./mysql/index.js");
 
-app.get("/ejs", async (req, res) => {
-  res.render("boardList", {
-    title: "나는 나는 남천우 입니다.",
-    length: 5,
-  });
+//정적파일 경로 설정
+app.use("/xlsx", express.static("xlsx"));
+app.use("/client", express.static("client"));
+
+app.use(
+  express.json({
+    limit: "50mb", //최대 50메가
+  })
+); // 클라이언트 요청 body를 json으로 파싱 처리
+
+app.listen(port, () => {
+  console.log("Server started. port " + port);
 });
+
+const HttpError = require("./modules/http-error");
+// https://velog.io/@yunsungyang-omc/Node.js-express%EC%97%90%EC%84%9C-%EC%97%90%EB%9F%AC%EB%A1%9C-HTTP-status-code-%ED%86%B5%EC%A0%9C%ED%95%98%EA%B8%B0
+
+/* 
+app.use((req, res, next) => {
+  const error = new HttpError("경로를 찾을 수 없습니다.", 404);
+  throw error;
+  //next(error);
+});
+*/
 
 app.get("/", (req, res) => {
   res.redirect("/login/loginHome");
@@ -138,25 +141,6 @@ app.post("/", async (req, res) => {
   //const customers = await mysql.query("sellerList");
   res.send("hi! 유성민 바보.");
 });
-
-/////////////////////////////////////////////////////////
-const fs = require("fs"); //파일시스템
-const multer = require("multer");
-const path = require("path");
-const xlsx = require("xlsx");
-require("dotenv").config({ path: "mysql/.env" });
-const mysql = require("./mysql/index.js");
-
-const HttpError = require("./modules/http-error");
-// https://velog.io/@yunsungyang-omc/Node.js-express%EC%97%90%EC%84%9C-%EC%97%90%EB%9F%AC%EB%A1%9C-HTTP-status-code-%ED%86%B5%EC%A0%9C%ED%95%98%EA%B8%B0
-
-/* 
-app.use((req, res, next) => {
-  const error = new HttpError("경로를 찾을 수 없습니다.", 404);
-  throw error;
-  //next(error);
-});
-*/
 
 //////////////////////이하는 routes/login.js에 기입///////////////////////
 
@@ -339,6 +323,29 @@ app.post("/member/click", async (req, res) => {
 });
  */
 
+//뷰pug 템플릿
+//app.set("view engine", "pug");
+//app.set("views", "views");
+//const home = (req, res) => res.render("main");
+//app.get("/main", home);
+
+//app.engine("html", require("ejs").renderFile);
+//app.set("view engine", "html");
+
+//템플릿 설정
+const ejs = require("ejs");
+app.engine("html", require("ejs").renderFile);
+app.set("view engine", "ejs");
+//app.set("view engine", "ejs");
+app.set("views", "./client/views");
+
+app.get("/ejs", async (req, res) => {
+  res.render("boardList", {
+    title: "나는 나는 남천우 입니다.",
+    length: 5,
+  });
+});
+
 //아이디 클릭수 체크
 app.post("/member/click", async (req, res) => {
   let member_id = req.body.member_id;
@@ -416,6 +423,59 @@ app.get("/a", async (req, res) => {
 app.get("/b", async (req, res) => {
   //
   res.sendFile(__dirname + "/login/write.html");
+});
+
+/////////////////// 공공 아이피 활용 ///////////////
+const request = require("request");
+const { resolve } = require("path");
+app.get("/c", async (req, res) => {
+  //개발자 코드
+  const Encode =
+    "wfphOlaaSHfPq4wIst51%2BDyGAmkWwW9%2Bng8eYEDpc47eMhQrNOoyKbzD29SvqTlTEJlAq7ZZ5Q72INkBFX6uaA%3D%3D";
+  //한 페이지 결과 수 //페이지 번호 //출발역 코드 //도착역 코드//주중.토.일//
+  const options = {
+    uri:
+      "http://apis.data.go.kr/B553766/smt-path/path?serviceKey=" +
+      Encode +
+      "&numOfRows=10&pageNo=1&dept_station_code=0222&dest_station_code=4117&week=DAY",
+    method: "GET",
+    body: {
+      priority: "high",
+    },
+    json: true,
+  };
+  //
+
+  const result = async () => {
+    return new Promise((resolve) => {
+      request.get(options, function (err, resquest, body) {
+        //callback
+        if (err) {
+          return console.log(err);
+        }
+        //console.log(body.data);
+        resolve(body.data);
+        //return body.data;
+      });
+    });
+  };
+
+  const api = await result();
+  const apiRoute = api.route;
+  //console.log(apiRoute);
+  let trlist = [];
+  for (var i = 0; i < apiRoute.length; i++) {
+    //console.log(apiRoute[i].station_nm);
+    trlist.push(apiRoute[i].station_nm);
+  }
+
+  /** 
+  res.render("trainList", {
+    trlist: apiRoute,
+  });
+   */
+
+  res.send(api);
 });
 
 /////////////////////////////////////

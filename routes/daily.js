@@ -5,7 +5,7 @@ const cors = require("cors"); //cross-origin 요청
 const jsName = "daily";
 const dailyController = require("../controllers/daily-controller");
 
-router.use(cors()); //cors 사용
+//router.use(cors()); //cors 사용
 router.use(
   express.json({
     limit: "50mb", //  요청 body 크기 제한

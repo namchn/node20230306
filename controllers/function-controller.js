@@ -19,13 +19,15 @@ const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
 //mysql 모듈
 const moduleMysql = require("../modules/dbconnection/mysql/mysql");
 //카운트 모듈
-let moduleViewCount = require("../modules/count/viewCount");
+const moduleViewCount = require("../modules/count/viewCount");
 //엑셀 모듈
-let moduleXlsx = require("../modules/fileStore/xlsx");
+const moduleXlsx = require("../modules/fileStore/xlsx");
 //메일 모듈
-let moduleMailing = require("../modules/mailing/google_mail");
+const moduleMailing = require("../modules/mailing/google_mail");
 //스케쥴 모듈
-let modulescheduling = require("../modules/scheduling/scheduling");
+const modulescheduling = require("../modules/scheduling/scheduling");
+//파일 모듈
+const moduleFs = require("../modules/fs/fs");
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -297,7 +299,7 @@ const scheduling1 = async (req, res, next) => {
   res.send(result);
 };
 
-//scheduling
+//scheduling3
 const scheduling3 = async (req, res, next) => {
   const schedulingtimes = "0 * * * * *";
   //const schedulingtimes = "0,5,10,15,20,25,30,35,40,45,50,55 * * * * *";
@@ -386,6 +388,25 @@ const apiSubway = async (req, res) => {
   res.send(api);
 };
 
+//
+const readfile = async (req, res, next) => {
+  let jsonfile = { title: "테스트 중입니다..", length: 5 };
+
+  let data = JSON.stringify(jsonfile);
+  //let data = "파일 데이터 쓰기ss";
+  //let filePath = path.join(__dirname, "/../modules/text_w.txt");
+  let filePath = path.join(__dirname, "/../modules/json_w.json");
+
+  let moduleWriteFileResult = await moduleFs.writeFileSync(filePath, data);
+
+  //{ "id": "salt", "value": "nam" }
+  let filePath2 = path.join(__dirname, "/../modules/json_w.json");
+  let moduleReadFileResult = moduleFs.readFileSync(filePath2);
+
+  const result = moduleReadFileResult;
+  res.send(result);
+};
+
 exports.getTest = getTest;
 exports.t1 = t1;
 exports.xlsxStored = xlsxStored;
@@ -400,3 +421,4 @@ exports.mysql = mysql;
 exports.scheduling1 = scheduling1;
 exports.scheduling3 = scheduling3;
 exports.apiSubway = apiSubway;
+exports.readfile = readfile;

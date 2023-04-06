@@ -9,7 +9,7 @@ const { check } = require("express-validator");
 //const checkAuth = require("../middleware/check-auth");
 //const fileUpload = require("../middleware/file-upload");
 
-router.use(cors()); //cors 사용
+//router.use(cors()); //cors 사용
 //const bodyParser = require("body-parser");
 //router.use(bodyParser.urlencoded({ extended: true }));
 router.use(

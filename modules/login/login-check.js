@@ -2,7 +2,7 @@ const cookie = require("cookie"); //cookie 모듈
 
 /**  */
 //세션 체크
-const loginCheck2 = async (getCookie, session, user) => {
+const loginCheck_express = async (getCookie, session, user) => {
   let isLogin = false;
   let userInfo = false;
   let userNm = false;
@@ -29,11 +29,11 @@ const loginCheck2 = async (getCookie, session, user) => {
 //app.use(sessionModule.session);
 
 //세션 생성
-const makeSession2 = async (reqSession, res, session, member) => {
+const makeSession_express = async (reqSession, res, session, member) => {
   let isLogin = false;
   let userInfo = false;
 
-  //sessionModule.session;
+  //req.session. 에 저장공간 .user 을 만들어 저장함.
 
   //
   reqSession.user = {
@@ -44,7 +44,7 @@ const makeSession2 = async (reqSession, res, session, member) => {
   console.log(reqSession.user);
 };
 //세션 삭제
-const deleteSession2 = async (req, res, session) => {
+const deleteSession_express = async (req, res, session) => {
   req.session.destroy(() => {
     req.session;
   });
@@ -52,6 +52,7 @@ const deleteSession2 = async (req, res, session) => {
 };
 
 /////////위쪽은 session-express 를 이용한 session 사용
+/////////아래쪽은 쿠키를 이용하여 직접 코딩
 
 //세션 체크
 const loginCheck = async (getCookie, session, user) => {
@@ -172,9 +173,9 @@ const deleteSession = async (req, res, session) => {
   res.clearCookie("connect.id");
 };
 
-exports.loginCheck = loginCheck2;
-exports.makeSession = makeSession2;
-exports.deleteSession = deleteSession2;
+exports.loginCheck = loginCheck_express;
+exports.makeSession = makeSession_express;
+exports.deleteSession = deleteSession_express;
 
 //exports.loginCheck = loginCheck;
 //exports.makeSession = makeSession;

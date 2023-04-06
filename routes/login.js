@@ -5,7 +5,7 @@ const cors = require("cors"); //cross-origin 요청
 const jsName = "/login";
 const loginController = require("../controllers/login-controller");
 
-router.use(cors()); //cors 사용
+//router.use(cors()); //cors 사용
 router.use(
   express.json({
     limit: "50mb", //

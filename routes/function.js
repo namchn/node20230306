@@ -8,7 +8,7 @@ const functionController = require("../controllers/function-controller");
 //카운트 모듈
 let moduleXlsx = require("../modules/fileStore/xlsx");
 
-router.use(cors()); //cors 사용
+//router.use(cors()); //cors 사용
 router.use(
   express.json({
     limit: "50mb", //  요청 body 크기 제한
@@ -90,6 +90,9 @@ router.get("/mysql", functionController.mysql);
 
 //공공 api subway 가져오기
 router.get("/api/subway", functionController.apiSubway);
+
+//파일 읽기
+router.get("/readfile", functionController.readfile);
 
 //모듈 주입
 module.exports = router;
