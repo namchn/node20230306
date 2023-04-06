@@ -17,22 +17,16 @@ router.use(express.urlencoded({ extended: true }));
 
 //개일일기 글쓰기 폼
 router.get("/write", dailyController.writeForm);
-
 //개일일기 글쓰기 insert
 router.post("/insert", dailyController.insert);
-
 //개일일기 글쓰기 post
 router.get("/edit", dailyController.editForm);
-
 //개일일기 글목록
 router.get("/list", dailyController.writeList);
-
 //개일일기 글 상세보기
 router.get("/view", dailyController.view);
-
 //개일일기 글쓰기 update
 router.post("/update", dailyController.update);
-
 //개일일기 글쓰기 delete
 router.get("/delete", dailyController.deleteOne);
 

@@ -23,8 +23,11 @@ let moduleViewCount = require("../modules/count/viewCount");
 //엑셀 모듈
 let moduleXlsx = require("../modules/fileStore/xlsx");
 //메일 모듈
-let moduleMailing = require("../modules/mailing/google_mail");
-
+const moduleMailing = require("../modules/mailing/google_mail");
+//스케쥴 모듈
+const modulescheduling = require("../modules/scheduling/scheduling");
+//파일 모듈
+const moduleFs = require("../modules/fs/fs");
 /////////////////////////////////////////////////////////////////////
 
 const loginHome = async (req, res) => {

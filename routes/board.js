@@ -17,24 +17,17 @@ router.use(express.urlencoded({ extended: true }));
 
 //글쓰기 폼
 router.get("/write", boardController.writeForm);
-
 //글쓰기 insert
 router.post("/insert", boardController.insert);
-
 //글쓰기 post
 router.get("/edit", boardController.editForm);
-
 //글목록
 router.get("/list", boardController.writeList);
-
 //글 상세보기
 router.get("/view", boardController.view);
-
 //글쓰기 update
 router.post("/update", boardController.update);
-
 //글쓰기 delete
 router.get("/delete", boardController.deleteOne);
-
 //모듈 주입
 module.exports = router;

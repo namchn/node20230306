@@ -5,7 +5,7 @@ const app = express();
 const { setPort } = require("./modules/setting/setting");
 const port = setPort["value"];
 
-//cross-origin 요청: 다른 서버의 요청을 가능하게 함
+//*cross-origin 요청: 다른 서버의 요청을 가능하게 함
 const cors = require("cors"); //Cross-Origin Resource Sharing
 // https://velog.io/@cptkuk91/Node.js-CORS-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0
 //app.use(cors());
@@ -29,6 +29,11 @@ app.use((req, res, next) => {
 });
 */
 
+//*정적파일 접근 경로 설정
+app.use("/xlsx", express.static("xlsx"));
+app.use("/client", express.static("client"));
+// app.use("/uploads/images", express.static(path.join("uploads", "images")));
+
 //*요청 body 파싱
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -37,11 +42,6 @@ app.use(bodyParser.json());
 //cookie-parser사용
 //const cookieParser = require("cookie-parser");
 //app.use(cookieParser());
-
-//*정적파일 접근 경로 설정
-app.use("/xlsx", express.static("xlsx"));
-app.use("/client", express.static("client"));
-// app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
 app.use(
   express.json({
@@ -94,49 +94,48 @@ app.use("/board", cors(), boardRoute); //board 라우트를 추가하고 기본�
 app.use("/daily", cors(), dailyRoute); //daily 라우트를 추가하고 기본경로로 /daily 사용
 app.use("/function", cors(), functionRoute); //function 라우트를 추가하고 기본경로로 /function 사용
 
-/////////////////////////////////////////////////////////
-//뷰pug 템플릿
-//app.set("view engine", "pug");
-//app.set("views", "views");
-//const home = (req, res) => res.render("main");
-//app.get("/main", home);
-
-//app.engine("html", require("ejs").renderFile);
-//app.set("view engine", "html");
-
-//템플릿 설정
-const ejs = require("ejs");
-app.engine("html", require("ejs").renderFile);
-app.set("view engine", "ejs");
-//app.set("view engine", "ejs");
-app.set("views", "./client/views");
-/////////////////////////////////////////////////////////
-
-app.get("/ejs", async (req, res) => {
-  res.render("boardList", {
-    title: "나는 나는 남천우 입니다.",
-    length: 5,
-  });
-});
-
+//*기본주소
 app.get("/", (req, res) => {
   res.redirect("/login/loginHome");
   //res.send("들어온걸 환영한다 용사여");
 });
 
+/////////////////////////////////////////////////////////
+//뷰pug 템플릿
+//app.set("view engine", "pug");
+//app.set("views", "./client/views");
+//const home = (req, res) => res.render("main");
+//app.get("/main", home);
+
+//*템플릿 설정
+const ejs = require("ejs");
+app.engine("html", require("ejs").renderFile);
+app.set("view engine", "ejs");
+//app.set("view engine", "html");
+app.set("views", "./client/views");
+/////////////////////////////////////////////////////////
+
+const HttpError = require("./modules/http-error");
+// https://velog.io/@yunsungyang-omc/Node.js-express%EC%97%90%EC%84%9C-%EC%97%90%EB%9F%AC%EB%A1%9C-HTTP-status-code-%ED%86%B5%EC%A0%9C%ED%95%98%EA%B8%B0
+
+/*   
+app.use((req, res, next) => {
+  const error = new HttpError("경로를 찾을 수 없습니다.", 404);
+  throw error;
+  //next(error);
+});
+*/
+
 app.get("/er", (req, res) => {
-  //const error = new HttpError("경로를 찾을 수 없습니다.", 404);
+  const error = new HttpError("경로를 찾을 수 없습니다...", 404);
+
+  console.log(error);
   //throw error;
 
   //const e = new Error("sample");
   //e.status = 400;
   //throw e;
   res.send("error 테스트");
-});
-
-app.post("/", async (req, res) => {
-  //const customers = await mysql.query("sellerList");
-  res.send("hi! 유성민 바보.");
 });
 
 /////////////////////////////////////////////////////////
@@ -146,17 +145,6 @@ const path = require("path");
 const xlsx = require("xlsx");
 require("dotenv").config({ path: "mysql/.env" });
 const mysql = require("./mysql/index.js");
-
-const HttpError = require("./modules/http-error");
-// https://velog.io/@yunsungyang-omc/Node.js-express%EC%97%90%EC%84%9C-%EC%97%90%EB%9F%AC%EB%A1%9C-HTTP-status-code-%ED%86%B5%EC%A0%9C%ED%95%98%EA%B8%B0
-
-/* 
-app.use((req, res, next) => {
-  const error = new HttpError("경로를 찾을 수 없습니다.", 404);
-  throw error;
-  //next(error);
-});
-*/
 
 //////////////////////이하는 routes/login.js에 기입///////////////////////
 
@@ -428,5 +416,9 @@ app.get("/b", async (req, res) => {
 /////////////////////////////////////
 // 기본경로나 /user말고 다른곳 진입했을경우 실행
 app.use((req, res, next) => {
-  res.status(404).send("Not Found");
+  res
+    .status(404)
+    .send(
+      "<div style='text-align:center'><p>Not Found.</p>  <a href='/'>go back to mainPage. </a><div>"
+    );
 });

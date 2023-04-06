@@ -5,9 +5,8 @@ const MemoryStore = require("memorystore")(session);
 //setting 값 설정
 const path = require("path");
 const moduleFs = require("../fs/fs");
-filePath = path.join(__dirname, "/../../_set/system_setting.json");
-const result = moduleFs.readFileSync(filePath);
-const json = JSON.parse(result); //JSON.stringify(result);
+const systemPath = path.join(__dirname, "/../../_set/system_setting.json");
+const json = JSON.parse(moduleFs.readFileSync(systemPath)); //JSON.stringify(result);
 
 const sessionObj = {
   secure: json.setting.expressSession.secure, // https 환경에서만 session 정보를 주고받도록처리

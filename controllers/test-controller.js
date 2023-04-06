@@ -19,11 +19,17 @@ const moduleSaltCrypto = require("../modules/crypto/module_saltCrypto");
 //mysql 모듈
 const moduleMysql = require("../modules/dbconnection/mysql/mysql");
 //카운트 모듈
-let moduleViewCount = require("../modules/count/viewCount");
+const moduleViewCount = require("../modules/count/viewCount");
 //엑셀 모듈
-let moduleXlsx = require("../modules/fileStore/xlsx");
+const moduleXlsx = require("../modules/fileStore/xlsx");
 //메일 모듈
-let moduleMailing = require("../modules/mailing/google_mail");
+const moduleMailing = require("../modules/mailing/google_mail");
+//스케쥴 모듈
+const modulescheduling = require("../modules/scheduling/scheduling");
+//파일 모듈
+const moduleFs = require("../modules/fs/fs");
+//test 모듈
+const testFs = require("../modules/test/test");
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -112,9 +118,105 @@ const memberList = async (req, res) => {
   //res.send(members);
 };
 
+//비동기 요청 코드1
+const https = require("https");
+const asyncHttpRequest1 = async (req, res) => {
+  let htmlPath;
+  //포문을 돌려요
+  let before = moment().valueOf();
+  var i = 0;
+  for (i = 0; i < 1; i++) {
+    let num = Number(5652592600 + i);
+    let numStr = "" + num;
+    // HTTP 요청을 보낼 옵션 설정
+    const options = {
+      //hostname: "search.daum.net", //
+      hostname: "port-0-node2023-3j5jwm62alg3i5c0s.sel3.cloudtype.app", //example.com
+
+      //hostname: "www.fmkorea.com",
+      //path: "/" + numStr, //  /some/path
+      path: "/login/loginHome", //  /some/path
+      //path: "/", //  /some/path
+      method: "GET",
+    };
+    htmlPath = await testFs.t1(options, "_" + numStr);
+  }
+  let after = moment().valueOf();
+  console.log("시간차이 (밀리세컨드):");
+  console.log(after - before);
+  //
+  //console.log(htmlPath);
+
+  // 2초 간격으로 메시지를 보여줌
+  let timerId = setInterval(() => console.log("째깍"), 5000);
+
+  // 5초 후에 정지
+  setTimeout(() => {
+    clearInterval(timerId);
+    console.log("정지");
+  }, 10001);
+
+  setTimeout(function () {
+    res.send("htmlPath");
+    //res.sendFile(htmlPath);
+  }, after - before + 500);
+};
+
+//비동기 요청 코드2
+const asyncHttpRequest2 = async (req, res) => {
+  let htmlPath;
+  //포문을 돌려요
+  let before = moment().valueOf();
+  let after = moment().valueOf();
+  console.log("시간차이 (밀리세컨드):");
+  console.log(after - before);
+  //
+  //console.log(htmlPath);
+
+  //htmlPath = htmlPath.replace(".html", i - 1 + ".html");
+
+  const printNumbers = async (from, to) => {
+    let current = from;
+
+    let timerId = setInterval(async () => {
+      var i = current;
+      let num = Number(5652592600 + i);
+      console.log(num);
+      //let numStr = "" + num;
+      // HTTP 요청을 보낼 옵션 설정
+      const options = {
+        //hostname: "search.daum.net", //
+        hostname: "port-0-node2023-3j5jwm62alg3i5c0s.sel3.cloudtype.app", //example.com
+
+        //hostname: "www.fmkorea.com",
+        //path: "/" + "" + num, //  /some/path
+        path: "/login/loginHome", //  /some/path
+        //path: "/", //  /some/path
+        method: "GET",
+      };
+      htmlPath = await testFs.t1(options, "_" + num);
+      //
+      if (current == to) {
+        clearInterval(timerId);
+        console.log("정지");
+      }
+      current++;
+    }, 1000);
+  };
+
+  // usage:
+  printNumbers(0, 100);
+
+  setTimeout(function () {
+    res.send("htmlPath");
+    //res.sendFile(htmlPath);
+  }, after - before + 500);
+};
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 exports.getTest = getTest;
 exports.postTest = postTest;
 exports.home = home;
 exports.memberList = memberList;
+exports.asyncHttpRequest1 = asyncHttpRequest1;
+exports.asyncHttpRequest2 = asyncHttpRequest2;

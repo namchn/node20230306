@@ -45,6 +45,18 @@ router.use((error, req, res, next) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
+router.get("/ejs", async (req, res) => {
+  res.render("boardList", {
+    title: "나는 나는 남천우 입니다.",
+    length: 5,
+  });
+});
+
+router.post("/", async (req, res) => {
+  //const customers = await mysql.query("sellerList");
+  res.send("hi! 유성민 바보.");
+});
+
 //멤버 가입폼 @
 router.get("/", async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
@@ -309,15 +321,16 @@ router.delete("/delete", function (req, res) {
 
 //멤버 가입폼 @
 router.get("/get", testController.getTest);
-
 //멤버 가입폼 @
 router.get("/post", testController.postTest);
-
 //멤버 가입폼 @
 router.get("/home", testController.home);
-
 //멤버 전체 검색@
 router.get("/memberList", testController.memberList);
+//비동기 요청 코드1
+router.get("/re1", testController.asyncHttpRequest1);
+//비동기 요청 코드2
+router.get("/re2", testController.asyncHttpRequest2);
 
 //모듈 주입
 module.exports = router;
