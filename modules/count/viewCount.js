@@ -16,4 +16,8 @@ let urlViewCount = (url) => {
   return moduleCount.count.UrlViewCount;
 };
 
-exports.urlViewCount = urlViewCount;
+module.exports = {
+  urlViewCount,
+};
+
+//exports.urlViewCount = urlViewCount;

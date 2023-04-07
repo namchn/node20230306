@@ -28,7 +28,10 @@ const moduleMailing = require("../modules/mailing/google_mail");
 const modulescheduling = require("../modules/scheduling/scheduling");
 //파일 모듈
 const moduleFs = require("../modules/fs/fs");
-
+//스크립트 모듈
+const moduleAlertMove = require("../modules/util/alertMove");
+//에러 constructor
+const HttpError = require("../modules/http-error");
 /////////////////////////////////////////////////////////////////////
 
 //글쓰기 폼
@@ -171,13 +174,9 @@ const insert = async (req, res) => {
 
   if (isValid) {
     redirectURL = redirectURL + "?board_no=" + board_no;
-
     errMsg = "글이 작성되었습니다.";
-    res.send(`
-      <script>
-        alert('${errMsg}')
-        location.href = '${redirectURL}'
-      </script>`);
+
+    res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
 
     //res.redirect(redirectURL);
   } else {
@@ -549,13 +548,10 @@ const update = async (req, res) => {
 
   if (isValid) {
     redirectURL = redirectURL + "?article_no=" + articleNo;
-
     errMsg = "글이 수정되었습니다.";
-    res.send(`
-      <script>
-        alert('${errMsg}')
-        location.href = '${redirectURL}'
-      </script>`);
+
+    res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
+
     //res.redirect(redirectURL);
   } else {
     falseRedirectURL = falseRedirectURL + "?board_no=" + board_no;
@@ -655,11 +651,9 @@ const deleteOne = async (req, res) => {
   if (isValid) {
     redirectURL = redirectURL + "?board_no=" + board_no;
     errMsg = "글이 삭제되었습니다.";
-    res.send(`
-      <script>
-        alert('${errMsg}')
-        location.href = '${redirectURL}'
-      </script>`);
+
+    res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
+
     //res.redirect(redirectURL);
   } else {
     falseRedirectURL = falseRedirectURL + "?article_no=" + articleNo;
@@ -667,10 +661,20 @@ const deleteOne = async (req, res) => {
   }
 };
 
-exports.writeForm = writeForm;
-exports.insert = insert;
-exports.writeList = writeList;
-exports.view = view;
-exports.editForm = editForm;
-exports.update = update;
-exports.deleteOne = deleteOne;
+module.exports = {
+  writeForm,
+  insert,
+  writeList,
+  view,
+  editForm,
+  update,
+  deleteOne,
+};
+
+//exports.writeForm = writeForm;
+//exports.insert = insert;
+//exports.writeList = writeList;
+//exports.view = view;
+//exports.editForm = editForm;
+//exports.update = update;
+//exports.deleteOne = deleteOne;

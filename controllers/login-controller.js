@@ -28,6 +28,10 @@ const moduleMailing = require("../modules/mailing/google_mail");
 const modulescheduling = require("../modules/scheduling/scheduling");
 //파일 모듈
 const moduleFs = require("../modules/fs/fs");
+//스크립트 모듈
+const moduleAlertMove = require("../modules/util/alertMove");
+//에러 constructor
+const HttpError = require("../modules/http-error");
 /////////////////////////////////////////////////////////////////////
 
 const loginHome = async (req, res) => {
@@ -171,35 +175,49 @@ const memberJoin = async (req, res) => {
   }
    */
 
-  let member_id = req.body.member_id;
+  const { member_id, member_nm, member_pw, member_pw2 } = req.body;
+
+  //let member_id = req.body.member_id;
   if (isValid) {
-    isValid = req.body.member_id == undefined ? false : true;
+    isValid = member_id == undefined ? false : true;
     if (!isValid) {
       errMsg = "아이디 값이 없음";
+      const error = new HttpError(errMsg, 406);
+      console.log(error);
+      //throw error;
     }
   }
 
-  let member_nm = req.body.member_nm;
+  //let member_nm = req.body.member_nm;
   if (isValid) {
-    isValid = req.body.member_nm == undefined ? false : true;
+    isValid = member_nm == undefined ? false : true;
     if (!isValid) {
       errMsg = "이름이 없음";
+      const error = new HttpError(errMsg, 406);
+      console.log(error);
+      //throw error;
     }
   }
 
-  let member_pw = req.body.member_pw;
+  //let member_pw = req.body.member_pw;
   if (isValid) {
-    isValid = req.body.member_pw == undefined ? false : true;
+    isValid = member_pw == undefined ? false : true;
     if (!isValid) {
-      errMsg = "패스워드가 없음";
+      errMsg = "첫번째 패스워드가 없음";
+      const error = new HttpError(errMsg, 406);
+      console.log(error);
+      //throw error;
     }
   }
 
-  let member_pw2 = req.body.member_pw2;
+  //let member_pw2 = req.body.member_pw2;
   if (isValid) {
-    isValid = req.body.member_pw2 == undefined ? false : true;
+    isValid = member_pw2 == undefined ? false : true;
     if (!isValid) {
-      errMsg = "패스워드가 없음";
+      errMsg = "두번째 패스워드가 없음";
+      const error = new HttpError(errMsg, 406);
+      console.log(error);
+      //throw error;
     }
   }
 
@@ -215,6 +233,9 @@ const memberJoin = async (req, res) => {
     console.log(today + "======");
     console.log(" 비밀번호가 다르다");
     errMsg = "위아래의 비밀번호가 다릅니다.";
+    const error = new HttpError(errMsg, 406);
+    console.log(error);
+    //throw error;
   }
 
   //암호화
@@ -242,6 +263,9 @@ const memberJoin = async (req, res) => {
 
     if (!isValid) {
       errMsg = "중복된 아이디입니다. ";
+      const error = new HttpError(errMsg, 406);
+      console.log(error);
+      //throw error;
     }
   }
 
@@ -252,6 +276,9 @@ const memberJoin = async (req, res) => {
     isValid = result.affectedRows != 1 ? false : true;
     if (!isValid) {
       errMsg = "회원가입에 실패하였습니다 다시 시도하여 주십시오. ";
+      const error = new HttpError(errMsg, 406);
+      console.log(error);
+      //throw error;
     }
   }
 
@@ -259,20 +286,12 @@ const memberJoin = async (req, res) => {
 
   if (isValid) {
     errMsg = "축하합니다. 가입되었습니다!";
-    res.send(`
-      <script>
-        alert('${errMsg}')
-        location.href = '${redirectURL}'
-      </script>`);
+    res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
     //res.redirect(redirectURL);
   } else {
     //가입 실패시 로직
     if (errMsg) {
-      res.send(`
-      <script>
-        alert('${errMsg}')
-        location.href = '${falseRedirectURL}'
-      </script>`);
+      res.send(await moduleAlertMove.alertMove(errMsg, falseRedirectURL));
     } else {
       res.redirect(falseRedirectURL);
     }
@@ -407,6 +426,9 @@ const memberLogin = async (req, res) => {
     console.log(today + "======");
     console.log(loginResult.userInfo);
     errMsg = "로그인되어있음.";
+    const error = new HttpError(errMsg, 406);
+    console.log(error);
+    //throw error;
     //redirectURL = redirectURL + "?msg=로그인되어있음.";
   }
 
@@ -446,6 +468,7 @@ const memberLogin = async (req, res) => {
 
       //암호 확인
       isValid = gotCryptoPieces.password == members[0].member_pw ? true : false;
+      //const [data] = members[0].filter(v => (v.member_pw == gotCryptoPieces.password ) );
 
       if (isValid) {
         //세션 생성
@@ -457,10 +480,15 @@ const memberLogin = async (req, res) => {
         );
       } else {
         errMsg = "비밀번호가 다릅니다.";
-        //등록되지 않은 회원입니다.비밀번호가 다릅니다.
+        const error = new HttpError(errMsg, 406);
+        console.log(error);
+        //throw error;
       }
     } else {
       errMsg = "등록되지 않은 회원입니다.";
+      const error = new HttpError(errMsg, 406);
+      console.log(error);
+      //throw error;
     }
   }
 
@@ -531,11 +559,7 @@ const memberLogin = async (req, res) => {
     console.log("로그인 완료");
     errMsg = "로그인 하셨군요 반갑습니다.";
 
-    res.send(`
-      <script>
-        alert('${errMsg}')
-        location.href = '${redirectURL}'
-      </script>`);
+    res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
     // res.redirect(redirectURL);
   } else {
     /**
@@ -548,11 +572,7 @@ const memberLogin = async (req, res) => {
     //res.redirect(falseRedirectURL);
 
     if (errMsg) {
-      res.send(`
-      <script>
-        alert('${errMsg}')
-        location.href = '${falseRedirectURL}'
-      </script>`);
+      res.send(await moduleAlertMove.alertMove(errMsg, falseRedirectURL));
     } else {
       res.redirect(falseRedirectURL);
     }
@@ -603,21 +623,27 @@ const loginOut = async (req, res) => {
     await loginCheckModule.deleteSession(req, res, session);
     errMsg = "다시 돌아와요~~ㅠㅠ";
     //res.redirect(redirectURL);
-    res.send(`
-      <script>
-        alert('${errMsg}')
-        location.href = '${redirectURL}'
-      </script>`);
+    res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
   } else {
     res.redirect(falseRedirectURL);
     //res.render("login/loginForm", params);
   }
 };
 
-exports.joinForm = joinForm;
-exports.memberJoin = memberJoin;
-exports.loginForm = loginForm;
-exports.memberLogin = memberLogin;
-exports.loginConfirm = loginConfirm;
-exports.loginOut = loginOut;
-exports.loginHome = loginHome;
+module.exports = {
+  joinForm,
+  memberJoin,
+  loginForm,
+  memberLogin,
+  loginConfirm,
+  loginOut,
+  loginHome,
+};
+
+//exports.joinForm = joinForm;
+//exports.memberJoin = memberJoin;
+//exports.loginForm = loginForm;
+//exports.memberLogin = memberLogin;
+//exports.loginConfirm = loginConfirm;
+//exports.loginOut = loginOut;
+//exports.loginHome = loginHome;

@@ -185,9 +185,18 @@ const xlsxFileDownload = async (
   return xlsx.write(workbook, { type: "base64" });
 };
 
-exports.xlsxStored = xlsxStored;
+module.exports = {
+  xlsxStored,
 
-exports.uploadSingle = uploadSingle;
-exports.xlsxToDB = xlsxToDB;
-exports.xlsxDownload = xlsxDownload;
-exports.xlsxFileDownload = xlsxFileDownload;
+  uploadSingle,
+  xlsxToDB,
+  xlsxDownload,
+  xlsxFileDownload,
+};
+
+//exports.xlsxStored = xlsxStored;
+
+//exports.uploadSingle = uploadSingle;
+//exports.xlsxToDB = xlsxToDB;
+//exports.xlsxDownload = xlsxDownload;
+//exports.xlsxFileDownload = xlsxFileDownload;

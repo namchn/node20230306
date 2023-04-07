@@ -28,6 +28,8 @@ const moduleMailing = require("../modules/mailing/google_mail");
 const modulescheduling = require("../modules/scheduling/scheduling");
 //파일 모듈
 const moduleFs = require("../modules/fs/fs");
+//스크립트 모듈
+const moduleAlertMove = require("../modules/util/alertMove");
 
 const HttpError = require("../modules/http-error");
 const { validationResult } = require("express-validator");
@@ -152,11 +154,7 @@ const xlsxToDB = async (req, res, next) => {
   let errMsg = "디비 업로드 되었습니다.";
 
   if (result) {
-    res.send(`
-    <script>
-      alert('${errMsg}')
-      location.href = '${falseRedirectURL}'
-    </script>`);
+    res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
   } else {
     res.redirect(falseRedirectURL);
   }
@@ -199,11 +197,7 @@ const xlsxDownload = async (req, res, next) => {
   let errMsg = "디비에서 엑셀 다운로드 되었습니다.";
 
   if (result) {
-    res.send(`
-    <script>
-      alert('${errMsg}')
-      location.href = '${falseRedirectURL}'
-    </script>`);
+    res.send(await moduleAlertMove.alertMove(errMsg, falseRedirectURL));
   } else {
     res.redirect(falseRedirectURL);
   }
@@ -407,18 +401,36 @@ const readfile = async (req, res, next) => {
   res.send(result);
 };
 
-exports.getTest = getTest;
-exports.t1 = t1;
-exports.xlsxStored = xlsxStored;
+module.exports = {
+  getTest,
+  t1,
+  xlsxStored,
 
-exports.xlsxToDbForm = xlsxToDbForm;
-exports.uploadSingle = uploadSingle;
-exports.xlsxToDB = xlsxToDB;
-exports.xlsxDownload = xlsxDownload;
-exports.xlsxFileDownload = xlsxFileDownload;
-exports.mailing = mailing;
-exports.mysql = mysql;
-exports.scheduling1 = scheduling1;
-exports.scheduling3 = scheduling3;
-exports.apiSubway = apiSubway;
-exports.readfile = readfile;
+  xlsxToDbForm,
+  uploadSingle,
+  xlsxToDB,
+  xlsxDownload,
+  xlsxFileDownload,
+  mailing,
+  mysql,
+  scheduling1,
+  scheduling3,
+  apiSubway,
+  readfile,
+};
+
+//exports.getTest = getTest;
+//exports.t1 = t1;
+//exports.xlsxStored = xlsxStored;
+
+//exports.xlsxToDbForm = xlsxToDbForm;
+//exports.uploadSingle = uploadSingle;
+//exports.xlsxToDB = xlsxToDB;
+//exports.xlsxDownload = xlsxDownload;
+//exports.xlsxFileDownload = xlsxFileDownload;
+//exports.mailing = mailing;
+//exports.mysql = mysql;
+//exports.scheduling1 = scheduling1;
+//exports.scheduling3 = scheduling3;
+//exports.apiSubway = apiSubway;
+//exports.readfile = readfile;

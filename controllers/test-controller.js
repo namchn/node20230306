@@ -28,6 +28,8 @@ const moduleMailing = require("../modules/mailing/google_mail");
 const modulescheduling = require("../modules/scheduling/scheduling");
 //파일 모듈
 const moduleFs = require("../modules/fs/fs");
+//스크립트 모듈
+const moduleAlertMove = require("../modules/util/alertMove");
 //test 모듈
 const testFs = require("../modules/test/test");
 
@@ -212,11 +214,29 @@ const asyncHttpRequest2 = async (req, res) => {
     //res.sendFile(htmlPath);
   }, after - before + 500);
 };
+
+//*웹소켓
+const socket = async (req, res) => {
+  let websocketPath = path.join(__dirname + "/../client/websocket/index.html");
+  res.sendFile(websocketPath);
+};
+
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
-exports.getTest = getTest;
-exports.postTest = postTest;
-exports.home = home;
-exports.memberList = memberList;
-exports.asyncHttpRequest1 = asyncHttpRequest1;
-exports.asyncHttpRequest2 = asyncHttpRequest2;
+
+module.exports = {
+  getTest,
+  postTest,
+  home,
+  memberList,
+  asyncHttpRequest1,
+  asyncHttpRequest2,
+  socket,
+};
+
+//exports.getTest = getTest;
+//exports.postTest = postTest;
+//exports.home = home;
+//exports.memberList = memberList;
+//exports.asyncHttpRequest1 = asyncHttpRequest1;
+//exports.asyncHttpRequest2 = asyncHttpRequest2;

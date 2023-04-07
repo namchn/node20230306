@@ -10,5 +10,10 @@ const matchRegex = async (regex, value) => {
   return await isValid;
 };
 
-exports.testRegex = testRegex;
-exports.matchRegex = matchRegex;
+module.exports = {
+  testRegex,
+  matchRegex,
+};
+
+//exports.testRegex = testRegex;
+//exports.matchRegex = matchRegex;

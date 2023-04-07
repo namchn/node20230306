@@ -448,6 +448,8 @@ router.get("/memberList", testController.memberList);
 router.get("/re1", testController.asyncHttpRequest1);
 //비동기 요청 코드2
 router.get("/re2", testController.asyncHttpRequest2);
+//소켓통신채팅
+router.get("/w", testController.socket);
 
 //모듈 주입
 module.exports = router;

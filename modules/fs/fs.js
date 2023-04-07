@@ -37,10 +37,14 @@ const readFile = async (filePath) => {
     //
     fs.readFile(filePath, "utf8", (err, data) => {
       if (err) {
-        throw err;
+        console.log(error);
+        return res.status(500).send("<h1>500 error</h1>");
+        //throw err;
       }
       //console.log(data);
       resolve(data);
+      //res.writeHead(200, { "Content-Type": "text/html" });
+      //res.end(data);
     });
     //
   });
@@ -81,10 +85,20 @@ const writeFileSync = async (filePath, data) => {
   });
 };
 
-exports.watchFile = watchFile; //파일변경 감시하는 함수
-exports.watchFileSql = watchFileSql; //Sql파일변경 감시하는 함수
+module.exports = {
+  watchFile, //파일변경 감시하는 함수
+  watchFileSql, //Sql파일변경 감시하는 함수
 
-exports.readFile = readFile; //비동기 파일 읽기 함수
-exports.readFileSync = readFileSync; //동기 파일 읽기 함수
-exports.writeFile = writeFile; //비동기 파일 쓰기 함수
-exports.writeFileSync = writeFileSync; //동기 파일 쓰기 함수
+  readFile, //비동기 파일 읽기 함수
+  readFileSync, //동기 파일 읽기 함수
+  writeFile, //비동기 파일 쓰기 함수
+  writeFileSync, //동기 파일 쓰기 함수
+};
+
+//exports.watchFile = watchFile; //파일변경 감시하는 함수
+//exports.watchFileSql = watchFileSql; //Sql파일변경 감시하는 함수
+
+//exports.readFile = readFile; //비동기 파일 읽기 함수
+//exports.readFileSync = readFileSync; //동기 파일 읽기 함수
+//exports.writeFile = writeFile; //비동기 파일 쓰기 함수
+//exports.writeFileSync = writeFileSync; //동기 파일 쓰기 함수
