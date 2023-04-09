@@ -26,6 +26,8 @@ const scheduling3 = async (schedulingtimes, actionFc) => {
   cron.schedule(schedulingtimes, actionFc, {
     timezone: "Asia/Seoul",
   });
+
+  return true;
 };
 
 exports.scheduling1 = scheduling1;

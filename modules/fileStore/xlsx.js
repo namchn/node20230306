@@ -185,6 +185,41 @@ const xlsxFileDownload = async (
   return xlsx.write(workbook, { type: "base64" });
 };
 
+const xlsxFileDownloadBuffer = async (
+  DbUsePath,
+  queryId,
+  header,
+  colsWidth,
+  firstSheetName,
+  xlsxFileName,
+  downloadDiretory
+) => {
+  // const uploadDirectory = path.join(__dirname, "/../uploads");
+  // const DbUsePath = path.join(__dirname, "/../mysql/index.js");
+  // const queryId = "customerList";
+  // const header: =  ["id", "name", "email", "phone", "address"];
+  //const colsWidth =   [{ wpx: 50 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }];
+  //const firstSheetName = "Customers";
+  //const downloadDiretory = "./xlsx";
+  //const xlsxFileName = "customersFromDB3.xlsx";
+
+  //디비 설정
+  const mysql = require(DbUsePath);
+
+  const workbook = xlsx.utils.book_new();
+  const list = await mysql.query(queryId);
+
+  const firstSheet = xlsx.utils.json_to_sheet(list, {
+    header: header,
+  });
+  firstSheet["!cols"] = colsWidth;
+
+  //첫번째 시트에 작성한 데이터를 넣는다.
+  xlsx.utils.book_append_sheet(workbook, firstSheet, firstSheetName);
+
+  return xlsx.write(workbook, { type: "buffer" }); //첨부파일 내용 생성
+};
+
 module.exports = {
   xlsxStored,
 
@@ -192,6 +227,7 @@ module.exports = {
   xlsxToDB,
   xlsxDownload,
   xlsxFileDownload,
+  xlsxFileDownloadBuffer,
 };
 
 //exports.xlsxStored = xlsxStored;

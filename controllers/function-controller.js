@@ -30,8 +30,9 @@ const modulescheduling = require("../modules/scheduling/scheduling");
 const moduleFs = require("../modules/fs/fs");
 //스크립트 모듈
 const moduleAlertMove = require("../modules/util/alertMove");
-
+// 에러  constructor
 const HttpError = require("../modules/http-error");
+
 const { validationResult } = require("express-validator");
 //const bcrypt = require("bcryptjs");
 //const jwt = require("jsonwebtoken");
@@ -382,6 +383,89 @@ const apiSubway = async (req, res) => {
   res.send(api);
 };
 
+//공공 아이피 활용 //메모리 저장방식
+const apiStore = require("../modules/store/apiStore"); //api내용 저장위치
+const apiSubwayStored = async (req, res) => {
+  let isStored = false;
+  let content = "";
+
+  //?id=12
+  const key = req.query.id;
+  console.log("===param===");
+  console.log(key);
+
+  apiInfo = apiStore[key];
+  console.log(apiStore);
+
+  if (apiInfo) {
+    isStored = true;
+    console.log("api 저장되어 있음");
+  } else {
+    isStored = false;
+    console.log("api 저장되어 있지 않음");
+  }
+
+  //저장된 값은 store 에서 가져옴
+  if (isStored) {
+    content = apiInfo;
+  } else {
+    //api 호출
+    //개발자 코드
+    const Encode =
+      "wfphOlaaSHfPq4wIst51%2BDyGAmkWwW9%2Bng8eYEDpc47eMhQrNOoyKbzD29SvqTlTEJlAq7ZZ5Q72INkBFX6uaA%3D%3D";
+    //한 페이지 결과 수 //페이지 번호 //출발역 코드 //도착역 코드//주중.토.일//
+    const options = {
+      uri:
+        "http://apis.data.go.kr/B553766/smt-path/path?serviceKey=" +
+        Encode +
+        "&numOfRows=10&pageNo=1&dept_station_code=0222&dest_station_code=4117&week=DAY",
+      method: "GET",
+      body: {
+        priority: "high",
+      },
+      json: true,
+    };
+    //
+
+    const result = async () => {
+      return new Promise((resolve) => {
+        request.get(options, function (err, resquest, body) {
+          //callback
+          if (err) {
+            return console.log(err);
+          }
+          //console.log(body.data);
+          resolve(body.data);
+          //return body.data;
+        });
+      });
+    };
+
+    const api = await result();
+    const apiRoute = api.route;
+    //console.log(apiRoute);
+    let trlist = [];
+    for (var i = 0; i < apiRoute.length; i++) {
+      //console.log(apiRoute[i].station_nm);
+      trlist.push(apiRoute[i].station_nm);
+    }
+
+    //api 저장하기
+    content = api;
+    //store 저장하기
+    apiStore[key] = content;
+  }
+
+  /////////////////////////////////////
+  res.send(content);
+
+  /** 
+    res.render("trainList", {
+      trlist: apiRoute,
+    });
+    */
+};
+
 //
 const readfile = async (req, res, next) => {
   let jsonfile = { title: "테스트 중입니다..", length: 5 };
@@ -401,6 +485,93 @@ const readfile = async (req, res, next) => {
   res.send(result);
 };
 
+//엑셀파일 을 메일 스케쥴링으로 보내기
+const exmail = async (req, res, next) => {
+  //////////////////////////////////////////////////
+  //엑셀 파일 첨부
+  const DbUsePath = path.join(__dirname, "/../mysql/index.js");
+  const queryId = "customerList";
+  const header = ["id", "name", "email", "phone", "address"];
+  const colsWidth = [
+    { wpx: 50 },
+    { wpx: 100 },
+    { wpx: 100 },
+    { wpx: 100 },
+    { wpx: 100 },
+  ];
+  const firstSheetName = "Customers";
+  //const downloadDiretory = "./xlsx";
+  const xlsxFileName = "customersFromDB.xlsx";
+
+  const xlsxResult = await moduleXlsx.xlsxFileDownloadBuffer(
+    DbUsePath,
+    queryId,
+    header,
+    colsWidth,
+    firstSheetName
+  );
+
+  //////////////////////////////////////////////////
+
+  const schedulingtimes = "0,5,10,15,20,25,30,35,40,45,50,55 * * * *";
+  //const schedulingtimes = "0,5,10,15,20,25,30,35,40,45,50,55 * * * * *";
+  let count = 0;
+
+  const actionFc = async () => {
+    let today = moment().format();
+    count++;
+
+    console.log(count + ": 메일링 함수 호출 시각:" + today);
+    //내용
+    let params = {
+      from: "ncware@gmail.com",
+      to: "chunwoo84@hanmail.net",
+      subject: "파일 첨부된 정기 메일링입니다. :" + count,
+      text: "엑셀파일을 첨부해서 이메일을 보냅니다. 시간은 " + today,
+      attachments: [
+        {
+          filename: count + "Customers.xlsx",
+          content: Buffer.from(xlsxResult, "base64"), //첨부파일 내용 생성
+        },
+      ],
+    };
+    //const r = await moduleMailing.googleMail(params);
+    const action = "5분마다 메일을 보냅니다.";
+
+    console.log(action);
+    try {
+      let response = await moduleMailing.googleMail(params);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //실행함수
+  const re = modulescheduling.scheduling3(schedulingtimes, actionFc);
+  //const result = "salt";
+  res.send(await moduleAlertMove.alertMove("정규적으로 메일링 중입니다.", "/"));
+};
+
+const moduleWebSocket = require("../modules/webSocket/webSocket.js");
+const socket = async (req, res, next) => {
+  const server = require("../app_login");
+  //console.log(server.server);
+
+  //moduleWebSocket.serverConnection(server);
+  //console.log(req.session);
+
+  let name = "";
+  if (req.session.user) {
+    name = req.session.user.userNm ? req.session.user.userNm : "";
+  }
+  //
+  let websocketPath = path.join(__dirname + "/../client/websocket/index.html");
+  websocketPath = "websocket/index";
+
+  res.render(websocketPath, { name: name });
+  //res.sendFile(websocketPath);
+};
+
 module.exports = {
   getTest,
   t1,
@@ -416,7 +587,10 @@ module.exports = {
   scheduling1,
   scheduling3,
   apiSubway,
+  apiSubwayStored,
   readfile,
+  exmail,
+  socket,
 };
 
 //exports.getTest = getTest;

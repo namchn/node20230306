@@ -1,26 +1,38 @@
 const cookie = require("cookie"); //cookie 모듈
 
+const classUser = require("./classUser"); //classUser 모듈
+
 /**  */
 //세션 체크
 const loginCheck_express = async (getCookie, session, user) => {
-  let isLogin = false;
-  let userInfo = false;
-  let userNm = false;
+  //객체 생성
+  const classU = new classUser(false, false, false);
+
+  ///let isLogin = false;
+  ///let userInfo = false;
+  ///let userNm = false;
 
   if (user) {
-    isLogin = user.isLogin;
-    userInfo = user.userInfo;
-    userNm = user.userNm;
+    classU.setIsLogin(user.isLogin);
+    classU.setUserInfo(user.userInfo);
+    classU.setUserNm(user.userNm);
+
+    ///isLogin = classU.getIsLogin();
+    ///userInfo = classU.getUserInfo();
+    ///userNm = classU.getUserNm();
+    ///isLogin = user.isLogin;
+    ///userInfo = user.userInfo;
+    ///userNm = user.userNm;
     console.log("로그인 된 상태");
+    console.log(user);
   } else {
     console.log("로그인 되지 않은 상태");
   }
-  console.log(user);
 
   return await {
-    isLogin: isLogin,
-    userInfo: userInfo,
-    userNm: userNm,
+    isLogin: classU.getIsLogin(),
+    userInfo: classU.getUserInfo(),
+    userNm: classU.getUserNm(),
   };
 };
 

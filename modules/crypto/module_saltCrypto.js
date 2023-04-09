@@ -1,5 +1,12 @@
 const crypto = require("crypto");
 
+//setting 값 가져오기
+const path = require("path");
+const moduleFs = require("../fs/fs");
+const systemPath = path.join(__dirname, "/../../_set/system_setting.json");
+const json = JSON.parse(moduleFs.readFileSync(systemPath)); //JSON.stringify(result);
+const rnum = Number(json.setting2.saltCrypto.repeatNumber.value);
+
 //crypto.createHash("sha512").update("pw1234").digest("base64");
 //console.log(crypto);
 
@@ -18,7 +25,7 @@ const createCryptoPassword = async (plainPassword) => {
   const salt = await createSalt(); //salt 생성
 
   return await new Promise((resolve, reject) => {
-    crypto.pbkdf2(plainPassword, salt, 10000, 64, "sha512", (err, key) => {
+    crypto.pbkdf2(plainPassword, salt, rnum, 64, "sha512", (err, key) => {
       if (err) reject(err);
       //console.log(key.toString("base64"));
       resolve({ password: key.toString("base64"), salt });
@@ -39,7 +46,7 @@ const createCode = async (passwordStr) => {
 //복호화
 const getCrytoPassword = async (plainPassword, salt) => {
   return await new Promise((resolve, reject) => {
-    crypto.pbkdf2(plainPassword, salt, 10000, 64, "sha512", (err, key) => {
+    crypto.pbkdf2(plainPassword, salt, rnum, 64, "sha512", (err, key) => {
       if (err) reject(err);
       resolve({ password: key.toString("base64"), salt });
     });

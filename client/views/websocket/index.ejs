@@ -3,10 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="upgrade-insecure-requests"
-    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>소켓통신</title>
 
@@ -23,22 +19,29 @@
         const domain = "localhost";
         //const domain = "192.168.35.9";
 
-        //const webSocket = new WebSocket("wss://" + domain + ":3002");
         const webSocket = new WebSocket("ws://" + domain + ":3002");
 
         //브라우저는 ws://localhost:3002 으로 요청을 보내게 된다.
-        //wss 는 https 과 관련됨
 
         //연결에 성공하면 아래의 콜백함수가 실행됨
         webSocket.onopen = () => {
           console.log("웹소켓 connection 성공 (HandShake)");
         };
 
-        const form = document.querySelector("form");
+        //const form = document.querySelector("form");
+        const button = document.querySelector(".submit");
 
-        form.addEventListener("submit", (e) => {
+        //button.addEventListener("submit", (e) => {
+        button.addEventListener("click", (e) => {
           e.preventDefault();
-          const { input, name } = e.target;
+
+          const form = document.querySelector("form");
+          const input = form.input;
+          const name = form.name;
+          //console.log(form.input.value);
+          //console.log(form.name.value);
+          //console.log(e.target);
+          //const { input, name } = e.target;
 
           //console.log(input.value);
           //console.log(name.value);
@@ -47,10 +50,12 @@
           //객체 형태로 메세지를 작성해서 보낸다.
           //단, 데이터를 전달할 때는 무조건 string 형태로 전달
 
+          let nameValue = "<%=name%>" != "" ? "<%=name%>" : name.value;
+
           let data = {
             type: "send_msg",
             data: input.value,
-            name: name.value,
+            name: nameValue,
           };
 
           webSocket.send(JSON.stringify(data)); //데이터 전달은 string 형태로,,
@@ -77,12 +82,14 @@
     </script>
   </head>
   <body>
-    <h1><a href="/">logo</a></h1>
+    <h1><a href="/">home</a></h1>
     <h2>hello web socket!!</h2>
-    <form action="/" method="get">
-      <input type="text" name="name" id="name" placeholder="이름" />
+
+    <%if(name){%> name : <%}%> <%=name%>
+    <form method="get">
+      <input type="hidden" name="name" id="name" placeholder="이름" value="" />
       <input type="text" name="input" id="input" placeholder="메시지" />
-      <input type="submit" value="전송" />
+      <input class="submit" type="button" value="전송" />
     </form>
     <ul id="chat"></ul>
   </body>

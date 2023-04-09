@@ -41,6 +41,13 @@ router.get("/ejs", async (req, res) => {
   });
 });
 
+router.get("/send", async (req, res) => {
+  res.render("home/home", {
+    title: "나는 나는 남천우 입니다.",
+    length: 5,
+  });
+});
+
 /////////////////////////////////////////////////////////
 const fs = require("fs"); //파일시스템
 const path = require("path");

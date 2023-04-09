@@ -89,10 +89,19 @@ router.get("/scheduling3", functionController.scheduling3);
 router.get("/mysql", functionController.mysql);
 
 //공공 api subway 가져오기
-router.get("/api/subway", functionController.apiSubway);
+//router.get("/api/subway", functionController.apiSubway);
+
+//공공 api subway 가져오기
+router.get("/api/subway", functionController.apiSubwayStored);
 
 //파일 읽기
 router.get("/readfile", functionController.readfile);
+
+// 디비에서 엑셀파일을 메일 스케쥴링으로 보내기
+router.get("/exmail", functionController.exmail);
+
+// 디비에서 엑셀파일을 메일 스케쥴링으로 보내기
+router.get("/socket", functionController.socket);
 
 //모듈 주입
 module.exports = router;

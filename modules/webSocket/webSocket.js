@@ -1,7 +1,23 @@
+const fs = require("fs");
+const path = require("path"); //경로 모듈
+
+let fsPath = path.join(__dirname, "/../../modules/fs/fs");
+//파일 모듈
+const moduleFs = require(fsPath);
+
+// 시간 모먼트js
+const moment = require("moment");
+require("moment-timezone");
+//현재시간
+moment.tz.setDefault("Asia/Seoul");
+
+//비동기 요청 코드
+const https = require("https");
+
 const webSocket = require("ws"); //외부라이브러리
 
 let sockets = []; //연결된 소켓들을 담을 배열
-module.exports = (server) => {
+const serverConnection = (server) => {
   //웹소켓 기능 구현
   const wss = new webSocket.Server({ server }); //express 서버와 포트 공유하기
   //const wss = new webSocket.Server({port:3001})
@@ -13,8 +29,8 @@ module.exports = (server) => {
     // ws 안에는 연결된 클라이언트의 정보가 담겨있다.
     //req에는 처음 커넥션을 맺었을 때의 요청헤더 정보가 담겨있다.
     //console.log(req.connction.remoteAddress);
-    console.log(req.connction);
-    console.log(req.session);
+    //console.log(req.connction);
+    //console.log(req.session);
 
     ws.id = req.headers["sec-websocket-key"];
     // sec-wevsocket-key 를 통해 웹소켓 식별
@@ -32,7 +48,7 @@ module.exports = (server) => {
         console.log(ws.id == v.id);
         return ws.id != v.id;
       });
-      console.log(sockets.length);
+      //console.log(sockets.length);
       //sockets 배열의 length를 통해 연결이 끊긴 것을 확인 할 수 있다.
     });
 
@@ -56,7 +72,6 @@ module.exports = (server) => {
     });
   });
 };
-
 //"connection"/onconnection : 커넥션이 맺어졌을 때 발생하는 이벤트
 //"message"/onmessage :데이터를 수신했을 때 발생하는 이벤트
 //"error"/onerror : 에러가 생겼을 때 발생하는 이벤트
@@ -64,3 +79,7 @@ module.exports = (server) => {
 
 //ws.send() 메소드를 사용해서 클라이언트에게 데이터를 전달.
 //ws.on() 메소드를 사용해서 클라이엍드로부터 온 데이터를 수신.
+
+module.exports = {
+  serverConnection,
+};

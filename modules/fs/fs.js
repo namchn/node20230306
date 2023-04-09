@@ -38,6 +38,7 @@ const readFile = async (filePath) => {
     fs.readFile(filePath, "utf8", (err, data) => {
       if (err) {
         console.log(error);
+        //console.error(`Error reading file: ${error}`);
         return res.status(500).send("<h1>500 error</h1>");
         //throw err;
       }
@@ -61,15 +62,21 @@ const readFile = async (filePath) => {
 
 // 파일  읽기
 const readFileSync = (filePath) => {
-  let result = fs.readFileSync(filePath, "utf8");
-  return result;
+  try {
+    let result = fs.readFileSync(filePath, "utf8");
+    return result;
+  } catch (error) {
+    console.error(`Error reading file: ${error}`);
+    return null;
+  }
 };
 
 //비동기 파일 쓰기
 const writeFile = async (filePath, data) => {
   fs.writeFile(filePath, data, "utf-8", (err) => {
     if (err) {
-      throw err;
+      //throw err;
+      console.log(err);
     }
     //비동기 파일 쓰기
   });
@@ -79,7 +86,8 @@ const writeFile = async (filePath, data) => {
 const writeFileSync = async (filePath, data) => {
   fs.writeFileSync(filePath, data, "utf-8", (err) => {
     if (err) {
-      throw err;
+      //throw err;
+      console.log(err);
     }
     //동기 파일 쓰기
   });

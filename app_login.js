@@ -37,7 +37,27 @@ const port = setPort["value"];
 const server = app.listen(port, () => {
   console.log("Server started. port " + port);
 });
+exports.server = server;
 
-//소켓통신 사용
-const webSocket = require("./modules/webSocket/socket.js");
-webSocket(server);
+//*소켓통신 사용
+//const webSocket = require("./modules/webSocket/socket.js");
+//webSocket(server);
+const moduleWebSocket = require("./modules/webSocket/webSocket.js");
+moduleWebSocket.serverConnection(server);
+
+//* 서버실행시 자동실행 함수 모음
+const moduleScheduleMailing = require("./modules/util/scheduleMailing");
+(async () => {
+  const exResult = await moduleScheduleMailing.exmailFc(
+    "0,30 * * * *",
+    "30분 마다 메일을 보냅니다."
+  );
+  console.log(exResult);
+})();
+
+//* OS
+const os = require("os");
+let [x1, x2, x3, x4] = os.cpus();
+let cpus = os.cpus();
+console.log(x1.model + " - 쓰레드 갯수 : " + cpus.length);
+//console.log(cpus);
