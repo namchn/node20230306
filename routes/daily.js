@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const compression = require("compression"); //응답을 압축
 const cors = require("cors"); //cross-origin 요청
 
 const jsName = "daily";

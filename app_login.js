@@ -19,15 +19,15 @@ app.use("/xlsx", express.static("xlsx"));
 app.use("/client", express.static("client"));
 
 //*요청 body 파싱
-//app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+const urlencodedParser = express.urlencoded({ extended: true });
+app.use(urlencodedParser); //urlencoded 데이터 파싱
+const jsonParser = express.json({ limit: "50mb" }); //최대 50메가
+app.use(jsonParser); // 클라이언트 요청 body를 json으로 파싱
+//app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(bodyParser.json());
 
-app.use(
-  express.json({
-    limit: "50mb", //최대 50메가
-  })
-); // 클라이언트 요청 body를 json으로 파싱 처리
+//X-Powered-By 막기
+app.disable("x-powered-by");
 
 //*router
 app.use(router);
@@ -46,6 +46,7 @@ const moduleWebSocket = require("./modules/webSocket/webSocket.js");
 moduleWebSocket.serverConnection(server);
 
 //* 서버실행시 자동실행 함수 모음
+/**
 const moduleScheduleMailing = require("./modules/util/scheduleMailing");
 (async () => {
   const exResult = await moduleScheduleMailing.exmailFc(
@@ -54,6 +55,7 @@ const moduleScheduleMailing = require("./modules/util/scheduleMailing");
   );
   console.log(exResult);
 })();
+ */
 
 //* OS
 const os = require("os");

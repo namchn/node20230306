@@ -14,10 +14,10 @@ const sessionObj = {
   resave: json.setting.expressSession.resave, // 세션을 같을경우에도 언제나 다시 저장할지 설정함
   saveUninitialized: json.setting.expressSession.saveUninitialized, // 세션에 저장할 내역이 없더라도 처음부터 세션을 생성할지 설정
   store: new MemoryStore({
-    checkPeriod: Number(json.setting.expressSession.maxAge),
+    checkPeriod: 1000 * 60 * Number(json.setting.expressSession.maxAgeMinute),
   }),
   cookie: {
-    maxAge: Number(json.setting.expressSession.maxAge),
+    maxAge: 1000 * 60 * Number(json.setting.expressSession.maxAgeMinute),
     httpOnly: json.setting.expressSession.cookie.httpOnly, // 자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함
     Secure: json.setting.expressSession.cookie.secure,
   },

@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const compression = require("compression"); //응답을 압축
 const cors = require("cors"); //cross-origin 요청
 
 const jsName = "/test";
@@ -12,13 +13,21 @@ const { check } = require("express-validator");
 //router.use(cors()); //cors 사용
 //const bodyParser = require("body-parser");
 //router.use(bodyParser.urlencoded({ extended: true }));
+
+/*
 router.use(
   express.json({
     limit: "50mb", //  요청 body 크기 제한
   })
 );
-
 router.use(express.urlencoded({ extended: true }));
+*/
+
+//에러를 넘길 수 있다.
+router.use("/errs", (req, res, next) => {
+  next(new Error("에러다"));
+  //res.send("gogogo");
+});
 
 router.use((error, req, res, next) => {
   // if (req.file) {
@@ -57,13 +66,8 @@ require("dotenv").config({ path: "mysql/.env" });
 const mysql = require("../mysql/index.js");
 /////////////////////////////////////////////////////////
 
-router.post("/", async (req, res) => {
-  //const customers = await mysql.query("sellerList");
-  res.send("hi! 유성민 바보.");
-});
-
 //멤버 가입폼 @
-router.get("/", async (req, res) => {
+router.get("/", compression(), async (req, res) => {
   //const result = await mysql.query("memberInsert", req.body.param);
   console.log(jsName + "/");
   //res.redirect("/login/home.html");
@@ -72,6 +76,11 @@ router.get("/", async (req, res) => {
     title: "나는 나는 남천우 입니다.",
     length: 5,
   });
+});
+
+router.post("/", async (req, res) => {
+  //const customers = await mysql.query("sellerList");
+  res.send("hi! 유성민 바보.");
 });
 
 //
