@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
-const ejs = require("ejs");
+const ejs = require("ejs"); //뷰 템플릿
 const { setPort } = require("./modules/setting/setting");
-const bodyParser = require("body-parser");
+//const bodyParser = require("body-parser");
 const sessionModule = require("./modules/session/express-session");
 const router = require("./routes/index");
 

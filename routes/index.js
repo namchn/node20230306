@@ -68,14 +68,44 @@ router.use("/daily", cors(), Auth, dailyRoute); //daily 라우트를 추가하�
 router.use("/function", cors(), functionRoute); //function 라우트를 추가하고 기본경로로 /function 사용
 router.use("/test", cors(), testRoute); //test 라우트를 추가하고 기본경로로 /test 사용
 
-//에러처리
+//라우터 공통 에러처리
 router.use((err, req, res, next) => {
+  /* if (req.file) {
+     fs.unlink(req.file.path, (err) => {
+       console.log(err);
+     });
+   } 
+  if (res.headerSent) {
+    return next(err);
+  }
+  */
+  console.log(req.url);
+  //console.log(req.originalUrl);
+  //console.log(req.method);
+  console.log(err.code);
   console.log(err);
-  res.status(500).json({ statusCode: res.statusCode, errMessage: err.message });
+
+  let redirectPage = "/error/500";
+  if (err.code == 400) {
+    redirectPage = "errorPage/400";
+  } else if (err.code == 500) {
+    redirectPage = "/error/500";
+  } else {
+    redirectPage = "/error/500";
+  }
+
+  //res.redirect(redirectPage);
+  //res.status(err.code || 500).render(rendPage);
+  res.json({
+    statusCode: err.code,
+    //statusCode: res.statusCode,
+    message: err.message || "An unknown error occurred!",
+  });
 });
 
 // *기본경로나 /사용 경로  가 아닌 잘못된 진입에 404 오류발생
 router.use((req, res, next) => {
+  res.status(404).render("errorPage/404");
   /** 
   res
     .status(404)
@@ -83,7 +113,6 @@ router.use((req, res, next) => {
       "<div style='text-align:center'><p>Not Found 404.</p>  <a href='/'>go back to mainPage. </a><div>"
     );
   */
-  res.status(404).render("errorPage/404");
 });
 
 /*

@@ -43,6 +43,7 @@ const writeForm = async (req, res) => {
   console.log(relativeUrl);
 
   let isValid = true; //로직 통과 체크
+  let resYn = true; //응답여부
   let loginResult; //로그인 결과 체크
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
   let renderURL = "daily/write"; //랜딩 주소
@@ -106,6 +107,7 @@ const insert = async (req, res) => {
   console.log(relativeUrl);
 
   let isValid = true; //로직 통과 체크
+  let resYn = true; //응답여부
   let loginResult; //로그인 결과 체크
   let articleList; //디비 결과
   let redirectURL = "/daily/list"; //리다이렉트 주소
@@ -160,7 +162,20 @@ const insert = async (req, res) => {
   //게시글 데이터 인서트
   if (isValid) {
     let params = [writer_id, writer_nm, title, text, board_no];
-    const result = await moduleMysql.query("articleInsertOne", params);
+    let result;
+    try {
+      result = await moduleMysql.query("articleInsertOne", params);
+    } catch (e) {
+      const error = new HttpError(
+        functionName + "articleInsertOne" + " 에러.",
+        500
+      );
+      isValid = false;
+      resYn = false;
+      console.log(e);
+      next(error);
+      //throw error;
+    }
 
     if (result.affectedRows == 1) {
       console.log(result);
@@ -176,7 +191,7 @@ const insert = async (req, res) => {
 
     //res.redirect(redirectURL);
   } else {
-    res.redirect(falseRedirectURL);
+    if (resYn) res.redirect(falseRedirectURL);
   }
 };
 
@@ -189,6 +204,7 @@ const writeList = async (req, res) => {
   console.log(relativeUrl);
 
   let isValid = true; //로직 통과 체크
+  let resYn = true; //응답여부
   let loginResult; //로그인 결과 체크
   let articleList; //디비 결과
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
@@ -229,10 +245,22 @@ const writeList = async (req, res) => {
 
   if (isValid) {
     //디비 커넥션
-    articleList = await moduleMysql.query("dailyArticleList", [
-      loginResult.userInfo,
-      boardNo,
-    ]);
+    try {
+      articleList = await moduleMysql.query("dailyArticleList", [
+        loginResult.userInfo,
+        boardNo,
+      ]);
+    } catch (e) {
+      const error = new HttpError(
+        functionName + " dailyArticleList" + " 에러.",
+        500
+      );
+      isValid = false;
+      resYn = false;
+      console.log(e);
+      next(error);
+      //throw error;
+    }
   }
 
   /**
@@ -257,7 +285,7 @@ const writeList = async (req, res) => {
     res.render(renderURL, params);
     //res.send(members);
   } else {
-    res.redirect(redirectURL);
+    if (resYn) res.redirect(redirectURL);
   }
 };
 
@@ -270,6 +298,7 @@ const view = async (req, res) => {
   console.log(relativeUrl);
 
   let isValid = true; //로직 통과 체크
+  let resYn = true; //응답여부
   let loginResult; //로그인 결과 체크
   let articleOne; //디비 결과
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
@@ -318,12 +347,28 @@ const view = async (req, res) => {
   //params = { member_id: "admin" };
 
   if (isValid) {
-    articleOne = await moduleMysql.query("dailyArticleView", [
-      articleNo,
-      loginResult.userInfo,
-    ]);
-
-    isValid = articleOne.length > 0 ? true : false;
+    try {
+      articleOne = await moduleMysql.query("dailyArticleView", [
+        articleNo,
+        loginResult.userInfo,
+      ]);
+    } catch (e) {
+      const error = new HttpError(
+        functionName + "dailyArticleView" + " 에러.",
+        500
+      );
+      //next(error);
+      //throw error;
+      isValid = false;
+      resYn = false;
+      console.log(e);
+      next(error);
+    }
+    if (isValid && articleOne.length > 0) {
+      isValid = articleOne.length > 0 ? true : false;
+    } else {
+      isValid = false;
+    }
 
     if (isValid) {
       //작성자와 접속자의 일치여부 확인
@@ -337,7 +382,19 @@ const view = async (req, res) => {
       console.log(today + "======");
       console.log("clickCnt: " + clickCnt);
       //click_cnt 업데이트
-      const result = await moduleMysql.query("articleClickUpdate", params);
+      try {
+        const result = await moduleMysql.query("articleClickUpdate", params);
+      } catch (e) {
+        const error = new HttpError(
+          functionName + " articleClickUpdate" + " 에러.",
+          500
+        );
+        isValid = false;
+        resYn = false;
+        console.log(e);
+        next(error);
+        //throw error;
+      }
     }
   }
 
@@ -361,7 +418,7 @@ const view = async (req, res) => {
     });
     res.render(renderURL, params);
   } else {
-    res.redirect(redirectURL);
+    if (resYn) res.redirect(redirectURL);
   }
 
   //res.send(members);
@@ -376,6 +433,7 @@ const editForm = async (req, res) => {
   console.log(relativeUrl);
 
   let isValid = true; //로직 통과 체크
+  let resYn = true; //응답여부
   let loginResult; //로그인 결과 체크
   let articleOne; //디비 결과
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
@@ -415,14 +473,42 @@ const editForm = async (req, res) => {
 
   /**  */
   if (isValid) {
-    articleOne = await moduleMysql.query("dailyArticleView", [
-      articleNo,
-      loginResult.userInfo,
-    ]);
+    try {
+      articleOne = await moduleMysql.query("dailyArticleView", [
+        articleNo,
+        loginResult.userInfo,
+      ]);
+    } catch (e) {
+      const error = new HttpError(
+        functionName + "dailyArticleView" + " 에러.",
+        500
+      );
+      //next(error);
+      //throw error;
+      isValid = false;
+      resYn = false;
+      console.log(e);
+      next(error);
+    }
 
     //작성자와 접속자의 일치여부 확인
-    isValid = member_id == articleOne[0].writer_id ? true : false;
-    if (!isValid) console.log("작성자와 접속자가 일치하지 않음");
+    if (isValid && articleOne.length > 0) {
+      isValid = member_id == articleOne[0].writer_id ? true : false;
+      if (!isValid) {
+        //console.log("작성자와 접속자가 일치하지 않음");
+        const error = new HttpError(
+          functionName + " 작성자와 접속자가 일치하지 않음" + " 에러.",
+          500
+        );
+        //throw error;
+        isValid = false;
+        resYn = false;
+        console.log(e);
+        next(error);
+      }
+    } else {
+      isValid = false;
+    }
   }
   //params = { member_id: "admin" };
 
@@ -446,7 +532,7 @@ const editForm = async (req, res) => {
 
     res.render(renderURL, params);
   } else {
-    res.redirect(redirectURL);
+    if (resYn) res.redirect(redirectURL);
   }
 
   //res.send(members);
@@ -461,6 +547,7 @@ const update = async (req, res) => {
   console.log(relativeUrl);
 
   let isValid = true; //로직 통과 체크
+  let resYn = true; //응답여부
   let loginResult; //로그인 결과 체크
   //let articleList; //디비 결과
   let redirectURL = "/daily/view"; //리다이렉트 주소
@@ -505,18 +592,43 @@ const update = async (req, res) => {
   }
 
   if (isValid) {
-    articleOne = await moduleMysql.query("dailyArticleView", [
-      articleNo,
-      loginResult.userInfo,
-    ]);
+    try {
+      articleOne = await moduleMysql.query("dailyArticleView", [
+        articleNo,
+        loginResult.userInfo,
+      ]);
+    } catch (e) {
+      const error = new HttpError(
+        functionName + "dailyArticleView" + " 에러.",
+        500
+      );
+      //throw error;
+      isValid = false;
+      resYn = false;
+      console.log(e);
+      next(error);
+    }
 
-    isValid = articleOne.length > 0 ? true : false;
+    if (isValid && articleOne.length > 0) {
+      isValid = articleOne.length > 0 ? true : false;
+    } else {
+      isValid = false;
+    }
 
     //작성자와 접속자의 일치여부 확인
     if (isValid) {
       isValid = member_id == articleOne[0].writer_id ? true : false;
       if (!isValid) {
-        console.log("작성자와 접속자가 일치하지 않음");
+        //console.log("작성자와 접속자가 일치하지 않음");
+        const error = new HttpError(
+          functionName + " 작성자와 접속자가 일치하지 않음" + " 에러.",
+          500
+        );
+        isValid = false;
+        resYn = false;
+        console.log(e);
+        next(error);
+        //throw error;
       }
     }
   }
@@ -549,11 +661,25 @@ const update = async (req, res) => {
 
   //글 수정
   if (isValid) {
-    const result = await moduleMysql.query("articleUpdateOne", params);
+    let result;
+
+    try {
+      result = await moduleMysql.query("articleUpdateOne", params);
+    } catch (e) {
+      const error = new HttpError(
+        functionName + "articleUpdateOne" + " 에러.",
+        500
+      );
+      isValid = false;
+      resYn = false;
+      console.log(e);
+      next(error);
+      //throw error;
+    }
 
     console.log(today + "======");
     console.log(result);
-    if (!result.affectedRows == 1) {
+    if (result == undefined) {
       isValid = false;
     }
   }
@@ -565,7 +691,7 @@ const update = async (req, res) => {
     //res.redirect(redirectURL);
   } else {
     falseRedirectURL = falseRedirectURL + "?board_no=" + board_no;
-    res.redirect(falseRedirectURL);
+    if (resYn) res.redirect(falseRedirectURL);
   }
 };
 
@@ -578,6 +704,7 @@ const deleteOne = async (req, res) => {
   console.log(relativeUrl);
 
   let isValid = true; //로직 통과 체크
+  let resYn = true; //응답여부
   let loginResult; //로그인 결과 체크
   //let articleList; //디비 결과
   let redirectURL = "/daily/list"; //리다이렉트 주소
@@ -622,18 +749,43 @@ const deleteOne = async (req, res) => {
   }
 
   if (isValid) {
-    articleOne = await moduleMysql.query("dailyArticleView", [
-      articleNo,
-      loginResult.userInfo,
-    ]);
+    try {
+      articleOne = await moduleMysql.query("dailyArticleView", [
+        articleNo,
+        loginResult.userInfo,
+      ]);
+    } catch (e) {
+      const error = new HttpError(
+        functionName + "dailyArticleView" + " 에러.",
+        500
+      );
+      isValid = false;
+      resYn = false;
+      console.log(e);
+      next(error);
+      //throw error;
+    }
 
-    isValid = articleOne.length > 0 ? true : false;
+    if (isValid && articleOne.length > 0) {
+      isValid = articleOne.length > 0 ? true : false;
+    } else {
+      isValid = false;
+    }
 
     //작성자와 접속자의 일치여부 확인
     if (isValid) {
       isValid = member_id == articleOne[0].writer_id ? true : false;
       if (!isValid) {
-        console.log("작성자와 접속자가 일치하지 않음");
+        //console.log("작성자와 접속자가 일치하지 않음");
+        const error = new HttpError(
+          functionName + " 작성자와 접속자가 일치하지 않음" + " 에러.",
+          500
+        );
+        isValid = false;
+        resYn = false;
+        console.log(e);
+        next(error);
+        //throw error;
       }
     }
   }
@@ -653,11 +805,24 @@ const deleteOne = async (req, res) => {
 
   let params = ["Y", articleNo, loginResult.userInfo];
   if (isValid) {
-    const result = await moduleMysql.query("dailyArticleDeleteYnOne", params);
+    let result;
+    try {
+      result = await moduleMysql.query("dailyArticleDeleteYnOne", params);
+    } catch (e) {
+      const error = new HttpError(
+        functionName + " dailyArticleDeleteYnOne" + " 에러.",
+        500
+      );
+      isValid = false;
+      resYn = false;
+      console.log(e);
+      next(error);
+      //throw error;
+    }
 
     console.log(today + "======");
     console.log(result);
-    if (!result.affectedRows == 1) {
+    if (result == undefined) {
       isValid = false;
     }
   }
@@ -669,7 +834,7 @@ const deleteOne = async (req, res) => {
     //res.redirect(redirectURL);
   } else {
     falseRedirectURL = falseRedirectURL + "?article_no=" + articleNo;
-    res.redirect(falseRedirectURL);
+    if (resYn) res.redirect(falseRedirectURL);
   }
 };
 
@@ -682,6 +847,7 @@ const dailyList = async (req, res) => {
   console.log(relativeUrl);
 
   let isValid = true; //로직 통과 체크
+  let resYn = true; //응답여부
   let loginResult; //로그인 결과 체크
   let articleList; //디비 결과
   let redirectURL = "/login/loginHome"; //리다이렉트 주소
@@ -723,10 +889,23 @@ const dailyList = async (req, res) => {
   if (isValid) {
     //디비 커넥션
     let user_id = loginResult.userInfo;
-    articleList = await moduleMysql.query("dailyArticleList", [
-      user_id,
-      boardNo,
-    ]);
+
+    try {
+      articleList = await moduleMysql.query("dailyArticleList", [
+        user_id,
+        boardNo,
+      ]);
+    } catch (e) {
+      const error = new HttpError(
+        functionName + "dailyArticleList" + " 에러.",
+        500
+      );
+      isValid = false;
+      resYn = false;
+      console.log(e);
+      next(error);
+      //throw error;
+    }
   }
 
   //params = { member_id: "admin" };
@@ -753,7 +932,7 @@ const dailyList = async (req, res) => {
     res.render(renderURL, params);
     //res.send(members);
   } else {
-    res.redirect(redirectURL);
+    if (resYn) res.redirect(redirectURL);
   }
 };
 

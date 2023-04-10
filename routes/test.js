@@ -22,25 +22,15 @@ router.use(
 );
 router.use(express.urlencoded({ extended: true }));
 */
+const HttpError = require("../modules/http-error");
 
 //에러를 넘길 수 있다.
 router.use("/errs", (req, res, next) => {
-  next(new Error("에러다"));
+  const error = new HttpError("에러다.", 500);
+  //throw error;
+  next(error);
+  //next(new Error("에러다"));
   //res.send("gogogo");
-});
-
-router.use((error, req, res, next) => {
-  // if (req.file) {
-  //   fs.unlink(req.file.path, (err) => {
-  //     console.log(err);
-  //   });
-  // }
-  console.log(req);
-  if (res.headerSent) {
-    return next(error);
-  }
-  res.status(error.code || 500);
-  res.json({ message: error.message || "An unknown error occurred!" });
 });
 
 router.get("/ejs", async (req, res) => {
