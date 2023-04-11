@@ -384,7 +384,7 @@ const apiSubway = async (req, res) => {
 };
 
 //공공 아이피 활용 //메모리 저장방식
-const apiStore = require("../modules/store/apiStore"); //api내용 저장위치
+const apiStore = require("../modules/memoryStore/apiStore"); //api내용 저장위치
 const apiSubwayStored = async (req, res) => {
   let isStored = false;
   let content = "";

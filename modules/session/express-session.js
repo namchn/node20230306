@@ -1,6 +1,7 @@
 //전역변수  세션 선언
 const session = require("express-session");
-const MemoryStore = require("memorystore")(session);
+const MemoryStore = require("memorystore")(session); //메모리저장
+const fileStore = require("session-file-store")(session); //파일저장
 
 //setting 값 설정
 const path = require("path");
@@ -8,21 +9,60 @@ const moduleFs = require("../fs/fs");
 const systemPath = path.join(__dirname, "/../../_set/system_setting.json");
 const json = JSON.parse(moduleFs.readFileSync(systemPath)); //JSON.stringify(result);
 
-const sessionObj = {
-  secure: json.setting.expressSession.secure, // https 환경에서만 session 정보를 주고받도록처리
-  secret: json.setting.expressSession.secret, // 암호화하는 데 쓰일 키
-  resave: json.setting.expressSession.resave, // 세션을 같을경우에도 언제나 다시 저장할지 설정함
-  saveUninitialized: json.setting.expressSession.saveUninitialized, // 세션에 저장할 내역이 없더라도 처음부터 세션을 생성할지 설정
-  store: new MemoryStore({
-    checkPeriod: 1000 * 60 * Number(json.setting.expressSession.maxAgeMinute),
-  }),
-  cookie: {
-    maxAge: 1000 * 60 * Number(json.setting.expressSession.maxAgeMinute),
-    httpOnly: json.setting.expressSession.cookie.httpOnly, // 자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함
-    Secure: json.setting.expressSession.cookie.secure,
-  },
-  name: json.setting.expressSession.name, // 세션 쿠키명 디폴트값은 connect.sid이지만 다른 이름('session-cookie')을 줄수도 있다.
-};
+//session 저장 방식
+let sessionObj;
+const sessionStoreMethod = json.setting.expressSession.store;
+if (sessionStoreMethod == "fileStore") {
+  sessionObj = {
+    secure: json.setting.expressSession.secure, // https 환경에서만 session 정보를 주고받도록처리
+    secret: json.setting.expressSession.secret, // 암호화하는 데 쓰일 키
+    resave: json.setting.expressSession.resave, // 세션을 같을경우에도 언제나 다시 저장할지 설정함
+    saveUninitialized: json.setting.expressSession.saveUninitialized, // 세션에 저장할 내역이 없더라도 처음부터 세션을 생성할지 설정
+
+    cookie: {
+      maxAge: 1000 * 60 * Number(json.setting.expressSession.maxAgeMinute),
+      httpOnly: json.setting.expressSession.cookie.httpOnly, // 자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함
+      Secure: json.setting.expressSession.cookie.secure,
+    },
+    store: new fileStore(),
+    name: json.setting.expressSession.name, // 세션 쿠키명 디폴트값은 connect.sid이지만 다른 이름('session-cookie')을 줄수도 있다.
+  };
+} else if (sessionStoreMethod == "DB") {
+  sessionObj = {
+    secure: json.setting.expressSession.secure, // https 환경에서만 session 정보를 주고받도록처리
+    secret: json.setting.expressSession.secret, // 암호화하는 데 쓰일 키
+    resave: json.setting.expressSession.resave, // 세션을 같을경우에도 언제나 다시 저장할지 설정함
+    saveUninitialized: json.setting.expressSession.saveUninitialized, // 세션에 저장할 내역이 없더라도 처음부터 세션을 생성할지 설정
+
+    cookie: {
+      maxAge: 1000 * 60 * Number(json.setting.expressSession.maxAgeMinute),
+      httpOnly: json.setting.expressSession.cookie.httpOnly, // 자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함
+      Secure: json.setting.expressSession.cookie.secure,
+    },
+    store: new MemoryStore({
+      checkPeriod: 1000 * 60 * Number(json.setting.expressSession.maxAgeMinute),
+    }),
+    name: json.setting.expressSession.name, // 세션 쿠키명 디폴트값은 connect.sid이지만 다른 이름('session-cookie')을 줄수도 있다.
+  };
+} else {
+  //MemoryStore
+  sessionObj = {
+    secure: json.setting.expressSession.secure, // https 환경에서만 session 정보를 주고받도록처리
+    secret: json.setting.expressSession.secret, // 암호화하는 데 쓰일 키
+    resave: json.setting.expressSession.resave, // 세션을 같을경우에도 언제나 다시 저장할지 설정함
+    saveUninitialized: json.setting.expressSession.saveUninitialized, // 세션에 저장할 내역이 없더라도 처음부터 세션을 생성할지 설정
+
+    cookie: {
+      maxAge: 1000 * 60 * Number(json.setting.expressSession.maxAgeMinute),
+      httpOnly: json.setting.expressSession.cookie.httpOnly, // 자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함
+      Secure: json.setting.expressSession.cookie.secure,
+    },
+    store: new MemoryStore({
+      checkPeriod: 1000 * 60 * Number(json.setting.expressSession.maxAgeMinute),
+    }),
+    name: json.setting.expressSession.name, // 세션 쿠키명 디폴트값은 connect.sid이지만 다른 이름('session-cookie')을 줄수도 있다.
+  };
+}
 
 /*
 const session = require("express-session");

@@ -1,34 +1,69 @@
 const express = require("express");
 const router = express.Router();
+const { query, param, body, validationResult } = require("express-validator"); //유효성 검사
+const moduleValidatorErrorChecker = require("../modules/error/validatorErrorChecker");
 const compression = require("compression"); //응답을 압축
 const cors = require("cors"); //cross-origin 요청
-
-const jsName = "board";
 const boardController = require("../controllers/board-controller");
 
-//router.use(cors()); //cors 사용
-router.use(
-  express.json({
-    limit: "50mb", //  요청 body 크기 제한
-  })
-);
-//const bodyParser = require("body-parser");
-//router.use(bodyParser.urlencoded({ extended: true }));
-router.use(express.urlencoded({ extended: true }));
+const jsName = "board";
 
 //글쓰기 폼
-router.get("/write", boardController.writeForm);
+let writeFormValidList = [
+  query("board_no").trim().not().isEmpty().withMessage("유효값 필요"),
+  moduleValidatorErrorChecker.validatorErrorChecker,
+];
+router.get("/write", writeFormValidList, boardController.writeForm);
+
 //글쓰기 insert
-router.post("/insert", boardController.insert);
-//글쓰기 post
-router.get("/edit", boardController.editForm);
+let insertValidList = [
+  body("writer_nm").trim().not().isEmpty().withMessage("유효값 필요"),
+  body("title").trim().not().isEmpty().withMessage("유효값 필요"),
+  body("text").trim().not().isEmpty().withMessage("유효값 필요"),
+  body("board_no").trim().not().isEmpty().withMessage("유효값 필요"),
+  moduleValidatorErrorChecker.validatorErrorChecker,
+];
+router.post("/insert", insertValidList, boardController.insert);
+
+//글수정 폼
+let editValidList = [
+  query("article_no").trim().not().isEmpty().withMessage("유효값 필요"),
+  moduleValidatorErrorChecker.validatorErrorChecker,
+];
+router.get("/edit", editValidList, boardController.editForm);
+
 //글목록
-router.get("/list", boardController.writeList);
+let listValidList = [
+  query("board_no").trim().not().isEmpty().withMessage("유효값 필요"),
+  moduleValidatorErrorChecker.validatorErrorChecker,
+];
+router.get("/list", listValidList, boardController.writeList);
+
 //글 상세보기
-router.get("/view", boardController.view);
+let viewValidList = [
+  query("article_no").trim().not().isEmpty().withMessage("유효값 필요"),
+  moduleValidatorErrorChecker.validatorErrorChecker,
+];
+router.get("/view", viewValidList, boardController.view);
+
 //글쓰기 update
-router.post("/update", boardController.update);
+let updateValidList = [
+  body("article_no").trim().not().isEmpty().withMessage("유효값 필요"),
+  body("writer_nm").trim().not().isEmpty().withMessage("유효값 필요"),
+  body("title").trim().not().isEmpty().withMessage("유효값 필요"),
+  body("text").trim().not().isEmpty().withMessage("유효값 필요"),
+  body("board_no").trim().not().isEmpty().withMessage("유효값 필요"),
+  moduleValidatorErrorChecker.validatorErrorChecker,
+];
+router.post("/update", updateValidList, boardController.update);
+
 //글쓰기 delete
-router.get("/delete", boardController.deleteOne);
+let deleteValidList = [
+  query("article_no").trim().not().isEmpty().withMessage("유효값 필요"),
+  query("board_no").trim().not().isEmpty().withMessage("유효값 필요"),
+  moduleValidatorErrorChecker.validatorErrorChecker,
+];
+router.get("/delete", deleteValidList, boardController.deleteOne);
+
 //모듈 주입
 module.exports = router;

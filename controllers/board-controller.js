@@ -32,6 +32,9 @@ const moduleFs = require("../modules/fs/fs");
 const moduleAlertMove = require("../modules/util/alertMove");
 //에러 constructor
 const HttpError = require("../modules/http-error");
+//게시판 메모리저장
+const { boardStore, listStore } = require("../modules/memoryStore/boardStore");
+const { storeLogic } = require("../modules/memoryStore/storeLogic");
 /////////////////////////////////////////////////////////////////////
 
 //글쓰기 폼
@@ -192,7 +195,7 @@ const insert = async (req, res, next) => {
   if (isValid) {
     redirectURL = redirectURL + "?board_no=" + board_no;
     errMsg = "글이 작성되었습니다.";
-
+    delete boardStore[board_no]; //수정시  캐쉬된메모리 삭제
     res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
 
     //res.redirect(redirectURL);
@@ -250,7 +253,16 @@ const writeList = async (req, res) => {
   if (isValid) {
     //디비 커넥션
     try {
-      articleList = await moduleMysql.query("articleList", boardNo);
+      //저장시 메모리 사용 여부
+      let memory = await storeLogic(
+        true,
+        boardStore,
+        req.query.board_no,
+        articleList
+      );
+      articleList = boardStore[req.query.board_no] = memory.isStored
+        ? memory.result
+        : await moduleMysql.query("articleList", boardNo);
     } catch (e) {
       const error = new HttpError(
         functionName + " articleList" + " 에러.",
@@ -681,7 +693,7 @@ const update = async (req, res) => {
   if (isValid) {
     redirectURL = redirectURL + "?article_no=" + articleNo;
     errMsg = "글이 수정되었습니다.";
-
+    delete boardStore[board_no]; //수정시  캐쉬된메모리 삭제
     res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
 
     //res.redirect(redirectURL);
@@ -827,6 +839,7 @@ const deleteOne = async (req, res) => {
     redirectURL = redirectURL + "?board_no=" + board_no;
     errMsg = "글이 삭제되었습니다.";
 
+    delete boardStore[board_no]; //수정시  캐쉬된메모리 삭제
     res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
 
     //res.redirect(redirectURL);

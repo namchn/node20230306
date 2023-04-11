@@ -423,10 +423,9 @@ const memberLogin = async (req, res) => {
   }
   if (!isValid) {
     //사용자 확인
-    console.log(today + "======");
-    console.log(loginResult.userInfo);
+    console.log(today + "====== : " + loginResult.userInfo);
     errMsg = "로그인되어있음.";
-    const error = new HttpError(errMsg, 406);
+    const error = new HttpError(errMsg, 400);
     console.log(error);
     //throw error;
     //redirectURL = redirectURL + "?msg=로그인되어있음.";
@@ -559,6 +558,10 @@ const memberLogin = async (req, res) => {
     console.log("로그인 완료");
     errMsg = "로그인 하셨군요 반갑습니다.";
 
+    /* req.session.save(async (err) => {
+      if (err) throw err;
+      res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
+    }); */
     res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
     // res.redirect(redirectURL);
   } else {
@@ -612,8 +615,7 @@ const loginOut = async (req, res) => {
   }
   if (isValid) {
     //사용자 확인
-    console.log(today + "======");
-    console.log(loginResult.userInfo);
+    console.log(today + "====== :" + loginResult.userInfo);
   }
 
   //로그인 되었을 경우

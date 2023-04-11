@@ -52,6 +52,7 @@ const makeSession_express = async (reqSession, res, session, member) => {
     isLogin: true,
     userInfo: member.member_id,
     userNm: member.member_nm,
+    //userEmail : member.email
   };
   console.log(reqSession.user);
 };

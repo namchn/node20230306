@@ -2,29 +2,12 @@ const express = require("express");
 const app = express();
 const ejs = require("ejs"); //뷰 템플릿
 const { setPort } = require("./modules/setting/setting");
-//const bodyParser = require("body-parser");
-const sessionModule = require("./modules/session/express-session");
 const router = require("./routes/index");
 
 //*템플릿 설정
 app.engine("html", ejs.renderFile);
 app.set("view engine", "ejs");
 app.set("views", "./client/views");
-
-//*세션 모듈 사용
-app.use(sessionModule.session);
-
-//*정적파일 접근 경로 설정
-app.use("/xlsx", express.static("xlsx"));
-app.use("/client", express.static("client"));
-
-//*요청 body 파싱
-const urlencodedParser = express.urlencoded({ extended: true });
-app.use(urlencodedParser); //urlencoded 데이터 파싱
-const jsonParser = express.json({ limit: "50mb" }); //최대 50메가
-app.use(jsonParser); // 클라이언트 요청 body를 json으로 파싱
-//app.use(bodyParser.urlencoded({ extended: true }));
-//app.use(bodyParser.json());
 
 //X-Powered-By 막기
 app.disable("x-powered-by");
@@ -46,16 +29,15 @@ const moduleWebSocket = require("./modules/webSocket/webSocket.js");
 moduleWebSocket.serverConnection(server);
 
 //* 서버실행시 자동실행 함수 모음
-/**
+/**  */
 const moduleScheduleMailing = require("./modules/util/scheduleMailing");
 (async () => {
   const exResult = await moduleScheduleMailing.exmailFc(
-    "0,30 * * * *",
-    "30분 마다 메일을 보냅니다."
+    "0 12 * * *", //초 분 시 일 월 년
+    "매일 12시 마다 메일을 보냅니다."
   );
   console.log(exResult);
 })();
- */
 
 //* OS
 const os = require("os");

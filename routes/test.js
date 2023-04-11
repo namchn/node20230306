@@ -40,12 +40,26 @@ router.get("/ejs", async (req, res) => {
   });
 });
 
+//
+const axios = require("axios");
+require("dotenv").config();
 router.get("/send", async (req, res) => {
-  res.render("home/home", {
+  /* const response = await axios.get(
+    `https://port-0-node2023-3j5jwm62alg3i5c0s.sel3.cloudtype.app/login/loginHome`
+  ); */
+
+  const response = await axios.get(`https://daum.net`);
+  const data = response.data;
+
+  //console.log(data);
+  res.send(data);
+
+  /*   res.render("home/home", {
     title: "나는 나는 남천우 입니다.",
     length: 5,
-  });
+  }); */
 });
+//
 
 /////////////////////////////////////////////////////////
 const fs = require("fs"); //파일시스템

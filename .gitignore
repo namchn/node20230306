@@ -12,11 +12,13 @@
 
 
 #######
-devnote.txt
-/client/etc/cho.png
 /client/etc/html/
 /client/etc/html1/
+
+//sessions
+/client/etc/cho.png
 /_set/system_setting.json.sample
 /_set/system_setting.json
+devnote.txt
 app_api.js
 app_login.js.bak
