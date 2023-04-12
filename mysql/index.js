@@ -2,6 +2,7 @@ const mysql = require("mysql");
 const fs = require("fs"); //파일시스템
 const path = require("path"); //경로 모듈
 //const moduleFs = require("../modules/fs/fs");
+require("dotenv").config({ path: "mysql/.env" });
 
 //const sql = require("./sql.js"); //sql 쿼리문이 작성된문
 let updateFilePath = path.join(__dirname + "/sqlbox/sql.js");

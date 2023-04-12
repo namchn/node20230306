@@ -15,10 +15,12 @@
 /client/etc/html/
 /client/etc/html1/
 
-//sessions
-/client/etc/cho.png
+/_log
 /_set/system_setting.json.sample
 /_set/system_setting.json
+/_set/.env
+/sessions
+/client/etc/cho.png
 devnote.txt
 app_api.js
 app_login.js.bak

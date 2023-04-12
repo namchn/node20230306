@@ -41,6 +41,8 @@
     <!-- 어드민 -->
     <% if (isLogin ==true ) { %>
     <ul>
+      <li><a href="/function/fileToServerForm">서버로 이미지 업로드</a></li>
+
       <li>
         <a href="/function/xlsxFileDownload"
           >디비정보를 엑셀파일로 다운로드받기(customers)</a
@@ -62,11 +64,7 @@
       <li>
         <a href="/function/xlsxDownload">디비에서 서버내로 엑셀 다운로드</a>
       </li>
-      <li>
-        <a href="/function/xlsxFileDownload"
-          >디비정보를 엑셀파일로 다운로드받기(customers)</a
-        >
-      </li>
+
       <li>
         <a href="/function/scheduling3"
           >메일이 정기적으로 가도록 함(스케쥴링).(beta)</a

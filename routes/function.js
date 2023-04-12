@@ -62,9 +62,17 @@ router.get("/", functionController.getTest);
 //엑셀내용 저장 기능
 router.get("/xlsx", functionController.xlsxStored);
 
+//파일을 서버로 저장 폼
+router.get("/fileToServerForm", functionController.fileToServerForm);
+//파일을 서버로 저장 기능
+router.post(
+  "/fileToServer",
+  functionController.uploadFileSingle(),
+  functionController.fileToServer
+);
+
 //엑셀에서 디비로 저장 폼
 router.get("/xlsxToDbForm", functionController.xlsxToDbForm);
-
 //엑셀에서 디비로 저장 기능
 router.post(
   "/xlsxToDB",

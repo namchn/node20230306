@@ -11,7 +11,12 @@ const json = JSON.parse(moduleFs.readFileSync(systemPath)); //JSON.stringify(res
 
 //session 저장 방식
 let sessionObj;
-const sessionStoreMethod = json.setting.expressSession.store;
+let sessionStoreMethod = json.setting.expressSession.store;
+
+//불러오는 방식을 무엇으로 할지..
+//require("dotenv").config({ path: "_set/.env" });
+//sessionStoreMethod = process.env.SESSION_STORE_METHOD;
+
 if (sessionStoreMethod == "fileStore") {
   sessionObj = {
     secure: json.setting.expressSession.secure, // https 환경에서만 session 정보를 주고받도록처리

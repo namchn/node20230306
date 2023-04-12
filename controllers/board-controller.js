@@ -179,7 +179,7 @@ const insert = async (req, res, next) => {
       isValid = false;
       resYn = false;
       console.log(e);
-      next(error);
+      return next(error);
       //throw error;
     }
 
@@ -271,7 +271,7 @@ const writeList = async (req, res) => {
       isValid = false;
       resYn = false;
       console.log(e);
-      next(error);
+      return next(error);
       //throw error;
     }
   }
@@ -366,7 +366,7 @@ const view = async (req, res) => {
       isValid = false;
       resYn = false;
       console.log(e);
-      next(error);
+      return next(error);
       //throw error;
     }
 
@@ -402,7 +402,7 @@ const view = async (req, res) => {
         isValid = false;
         resYn = false;
         console.log(e);
-        next(error);
+        return next(error);
       }
     }
   }
@@ -490,7 +490,7 @@ const editForm = async (req, res) => {
       isValid = false;
       resYn = false;
       console.log(e);
-      next(error);
+      return next(error);
     }
     //작성자와 접속자의 일치여부 확인
     if (isValid && articleOne.length > 0) {
@@ -507,7 +507,7 @@ const editForm = async (req, res) => {
         //throw error;
         isValid = false;
         resYn = false;
-        next(error);
+        return next(error);
       }
     } else {
       //console.log("게시글이 없음");
@@ -519,7 +519,7 @@ const editForm = async (req, res) => {
       //throw error;
       isValid = false;
       resYn = false;
-      next(error);
+      return next(error);
     }
   }
   //params = { member_id: "admin" };
@@ -612,7 +612,7 @@ const update = async (req, res) => {
       //throw error;
       isValid = false;
       resYn = false;
-      next(error);
+      return next(error);
       //console.log(e);
     }
 
@@ -633,7 +633,7 @@ const update = async (req, res) => {
         //throw error;
         isValid = false;
         resYn = false;
-        next(error);
+        return next(error);
         //console.log(e);
       }
     }
@@ -680,7 +680,7 @@ const update = async (req, res) => {
       isValid = false;
       resYn = false;
       console.log(e);
-      next(error);
+      return next(error);
     }
 
     console.log(today + "======");
@@ -766,7 +766,7 @@ const deleteOne = async (req, res) => {
       isValid = false;
       resYn = false;
       console.log(e);
-      next(error);
+      return next(error);
     }
 
     if (isValid && articleOne.length > 0) {
@@ -778,7 +778,7 @@ const deleteOne = async (req, res) => {
       //throw error;
       isValid = false;
       resYn = false;
-      next(error);
+      return next(error);
     }
 
     //작성자와 접속자의 일치여부 확인
@@ -793,7 +793,7 @@ const deleteOne = async (req, res) => {
         isValid = false;
         resYn = false;
         console.log(e);
-        next(error);
+        return next(error);
         //throw error;
       }
     }
@@ -826,7 +826,7 @@ const deleteOne = async (req, res) => {
       isValid = false;
       resYn = false;
       console.log(e);
-      next(error);
+      return next(error);
     }
     console.log(today + "======");
     console.log(result);

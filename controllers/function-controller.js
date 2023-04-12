@@ -22,6 +22,8 @@ const moduleMysql = require("../modules/dbconnection/mysql/mysql");
 const moduleViewCount = require("../modules/count/viewCount");
 //엑셀 모듈
 const moduleXlsx = require("../modules/fileStore/xlsx");
+//엑셀 모듈
+const modulefile = require("../modules/fileStore/file");
 //메일 모듈
 const moduleMailing = require("../modules/mailing/google_mail");
 //스케쥴 모듈
@@ -128,6 +130,27 @@ const xlsxToDbForm = async (req, res, next) => {
     title: "나는 나는 남천우 입니다.",
     length: 5,
   });
+};
+
+const fileToServerForm = async (req, res, next) => {
+  res.render("upload/img_upload", {
+    title: "나는 나는 남천우 입니다.",
+    length: 5,
+  });
+};
+
+//파일  업로드 설정 기능
+const uploadFileSingle = () => {
+  //
+  const uploadDirectory = path.join(__dirname, "/../client/etc/img");
+  return modulefile.uploadFileSingle(uploadDirectory, "filenames");
+
+  //return
+  //res.send("업로드 성공");
+};
+//엑셀에서 디비로 저장 기능
+const fileToServer = async (req, res, next) => {
+  res.send("서버로 전송");
 };
 
 //엑셀 업로드 설정 기능
@@ -296,8 +319,13 @@ const scheduling1 = async (req, res, next) => {
 
 //scheduling3
 const scheduling3 = async (req, res, next) => {
-  const schedulingtimes = "0 * * * * *";
+  const schedulingtimes = "0,30 * * * *";
+  //const schedulingtimes = "0 * * * * *";
   //const schedulingtimes = "0,5,10,15,20,25,30,35,40,45,50,55 * * * * *";
+
+  const action = "30분마다 메일을 보냅니다.";
+  console.log(action);
+
   let count = 0;
 
   const actionFc = async () => {
@@ -313,9 +341,7 @@ const scheduling3 = async (req, res, next) => {
       text: "반갑습니다. 시간이 " + today,
     };
     //const r = await moduleMailing.googleMail(params);
-    const action = "1분마다 메일을 보냅니다.";
 
-    console.log(action);
     try {
       let response = await moduleMailing.googleMail(params);
     } catch (err) {
@@ -577,9 +603,13 @@ module.exports = {
   t1,
   xlsxStored,
 
+  fileToServerForm,
+  uploadFileSingle,
+  fileToServer,
   xlsxToDbForm,
   uploadSingle,
   xlsxToDB,
+
   xlsxDownload,
   xlsxFileDownload,
   mailing,
