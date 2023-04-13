@@ -1,6 +1,10 @@
 const mysql = require("mysql");
 const fs = require("fs"); //파일시스템
 const path = require("path"); //경로 모듈
+
+//변경시 캐쉬도 삭제주어야 함.
+const { boardStore, listStore } = require("../modules/memoryStore/boardStore");
+
 //const moduleFs = require("../modules/fs/fs");
 require("dotenv").config({ path: "mysql/.env" });
 
@@ -12,8 +16,18 @@ let sql = require(updateFilePath);
 fs.watchFile(updateFilePath, (curr, prev) => {
   //콜백 리스너 함수 실행
   console.log(
-    "파일 변경 시 " + updateFilePath + " 이 재시작 없이 반영되도록 함."
+    "파일 변경 시 " +
+      updateFilePath +
+      " 이 재시작 없이 반영되도록 함. 또한 캐쉬 삭제도 병행 함."
   );
+
+  //수정시  캐쉬된메모리 삭제
+  let storeKeys = Object.keys(boardStore);
+  for (let index = 0; index < storeKeys.length; index++) {
+    const key = storeKeys[index];
+    delete boardStore[key];
+  }
+
   delete require.cache[require.resolve(updateFilePath)]; //캐시에 저장되어 있는 파일삭제
   sql = require(updateFilePath); //변경 파일 재할당
 });
