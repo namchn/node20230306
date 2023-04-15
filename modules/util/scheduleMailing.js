@@ -51,6 +51,8 @@ const exmailFc = async (schedulingtimes, actionStr) => {
     let today = moment().format();
     count++;
 
+    let html = "<div style='color:red' >html로 작성하였습니다.<div>"; //
+
     console.log(count + ": 메일링 함수 호출 시각:" + today);
     //내용
     let params = {
@@ -59,6 +61,8 @@ const exmailFc = async (schedulingtimes, actionStr) => {
       subject: "파일 첨부된 정기 메일링입니다. :" + count,
       text:
         actionStr + "엑셀파일을 첨부해서 이메일을 보냅니다. 시간은 " + today,
+      //html: Array.join(''),
+      html: html,
       attachments: [
         {
           filename: today + "Customers.xlsx",

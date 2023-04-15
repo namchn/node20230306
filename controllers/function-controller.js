@@ -287,6 +287,7 @@ const mailing = async (req, res, next) => {
     to: "likencw@naver.com",
     subject: "안녕하세요",
     text: "반갑습니다.",
+    //html: Array.join(''),
   };
 
   const r = await moduleMailing.googleMail(params);
@@ -554,6 +555,7 @@ const exmail = async (req, res, next) => {
       to: "chunwoo84@hanmail.net",
       subject: "파일 첨부된 정기 메일링입니다. :" + count,
       text: "엑셀파일을 첨부해서 이메일을 보냅니다. 시간은 " + today,
+      //html: Array.join(''),
       attachments: [
         {
           filename: count + "Customers.xlsx",
