@@ -17,7 +17,8 @@ app.use(router);
 
 //*설정값 가져오기
 const port = setPort["value"];
-const server = app.listen(port, () => {
+const server = app.listen(port, "0.0.0.0", () => {
+  //"0.0.0.0" => ip를  IPv6 에서 IPv4로 설정
   console.log("Server started. port " + port);
 });
 exports.server = server;

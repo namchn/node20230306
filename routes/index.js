@@ -141,6 +141,32 @@ function excuteTimeout(req, res, next) {
 }
 ////////////////////////////////////////////
 
+// ip 가져오기
+const requestIp = require("request-ip");
+// 동일ip 접속량 제한
+const expressRateLimit = require("express-rate-limit");
+const rateLimit = expressRateLimit({
+  windowMs: 1 * 10 * 1000,
+  max: 10,
+  delayMs: 1 * 1000,
+  handler(req, res) {
+    //let ip = requestIp.getClientIp(req);
+    let ip = req.ip;
+    console.log("ip: " + ip);
+    //console.log("statusCode: " + res.statusCode);
+    res.status(this.statusCode).json({
+      code: this.statusCode,
+      //message: "10초 10번 1초씩 요청가능",
+      message:
+        ip +
+        ": 해당 아이피로 짧은시간동안 너무 많은 요청이 들어옵니다. 그래서 해당아이피로 접근을 1분간 차단합니다. 1분 후 새로고침(F5) 해주세요",
+      //Too many requests, please try again later.
+    });
+  },
+});
+
+/////////////////////////////////////////////
+
 //*기본주소
 router.get("/", (req, res) => {
   //console.log("req.session : ");
@@ -151,7 +177,7 @@ router.get("/", (req, res) => {
 //*라우터 설정
 router.use("/customer", customerRoute); //customer 라우트를 추가하고 기본경로로 /customer 사용
 router.use("/product", productRoute); //product 라우트를 추가하고 기본경로로 /product 사용
-router.use("/login", cors(), loginRoute); //login 라우트를 추가하고 기본경로로 /login 사용
+router.use("/login", rateLimit, cors(), loginRoute); //login 라우트를 추가하고 기본경로로 /login 사용
 router.use("/board", cors(), Auth, compression(compressionOpt), boardRoute); //board 라우트를 추가하고 기본경로로 /board 사용
 router.use("/daily", cors(), Auth, dailyRoute); //daily 라우트를 추가하고 기본경로로 /daily 사용
 router.use("/function", cors(), functionRoute); //function 라우트를 추가하고 기본경로로 /function 사용
@@ -215,28 +241,5 @@ router.use((req, res, next) => {
   res.header("Pragma", "no-cache");
 });
 */
-
-// ip 가져오기
-const requestIp = require("request-ip");
-// 동일ip 접속량 제한
-const expressRateLimit = require("express-rate-limit");
-const rateLimit = expressRateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 5,
-  delayMs: 1 * 1000,
-  handler(req, res) {
-    let ip = requestIp.getClientIp(req);
-    //console.log("ip: " + ip);
-    //console.log("statusCode: " + res.statusCode);
-    res.status(this.statusCode).json({
-      code: this.statusCode,
-      //message: "1분에 5번 10초씩 요청가능",
-      message:
-        ip +
-        ": 해당 아이피로 짧은시간동안 너무 많은 요청이 들어옵니다. 그래서 해당아이피로 접근을 1분간 차단합니다.",
-      //Too many requests, please try again later.
-    });
-  },
-});
 
 module.exports = router;
