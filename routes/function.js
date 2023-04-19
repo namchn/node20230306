@@ -83,7 +83,7 @@ router.post(
 //엑셀 디비에서 다운로드 기능
 router.get("/xlsxDownload", functionController.xlsxDownload);
 
-//엑셀 디비에서 다운로드 기능
+//엑셀 디비에서 클라이언트가 파일로 다운로드 기능
 router.get("/xlsxFileDownload", functionController.xlsxFileDownload);
 
 //구글 메일
@@ -109,7 +109,7 @@ router.get("/readfile", functionController.readfile);
 // 디비에서 엑셀파일을 메일 스케쥴링으로 보내기
 router.get("/exmail", functionController.exmail);
 
-// 디비에서 엑셀파일을 메일 스케쥴링으로 보내기
+// 소캣통신
 router.get("/socket", functionController.socket);
 
 //모듈 주입

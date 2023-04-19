@@ -5,6 +5,7 @@ const classUser = require("./classUser"); //classUser 모듈
 /**  */
 //세션 체크
 const loginCheck_express = async (getCookie, session, user) => {
+  // user 는 req.session.user
   //객체 생성
   const classU = new classUser(false, false, false);
 

@@ -62,7 +62,7 @@ const exmailFc = async (schedulingtimes, actionStr) => {
       text:
         actionStr + "엑셀파일을 첨부해서 이메일을 보냅니다. 시간은 " + today,
       //html: Array.join(''),
-      html: html,
+      //html: html,
       attachments: [
         {
           filename: today + "Customers.xlsx",
