@@ -42,7 +42,13 @@ const loginCheck_express = async (getCookie, session, user) => {
 //app.use(sessionModule.session);
 
 //세션 생성
-const makeSession_express = async (reqSession, res, session, member) => {
+const makeSession_express = async (
+  reqSession,
+  res,
+  session,
+  member,
+  paramList
+) => {
   let isLogin = false;
   let userInfo = false;
 
@@ -54,6 +60,7 @@ const makeSession_express = async (reqSession, res, session, member) => {
     userInfo: member.member_id,
     userNm: member.member_nm,
     //userEmail : member.email
+    kakaoToken: paramList.kakaoToken,
   };
   console.log(reqSession.user);
 };
@@ -132,7 +139,7 @@ const loginCheck = async (param) => {
  */
 
 //세션 생성 : 암호화가 필요함.
-const makeSession = async (reqSession, res, session, member_id) => {
+const makeSession = async (reqSession, res, session, member_id, paramList) => {
   let isLogin = false;
   let userInfo = false;
 

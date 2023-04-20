@@ -15,11 +15,10 @@
 /client/etc/html/
 /client/etc/html1/
 /client/etc/img/*
+/_log/*
 
 ######
-/_log
 /node_modules
-/node_modules2
 /_set/system_setting.json.sample
 /_set/system_setting.json
 /_set/.env

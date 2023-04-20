@@ -31,5 +31,10 @@ router.get("/loginConfirm", loginController.loginConfirm);
 //멤버 로그아웃
 router.get("/loginOut", loginController.loginOut);
 
+//카카오 로그인 구현
+router.get("/kakaoLogin", loginController.kakaoLogin);
+//카카오 리다이렉트
+router.get("/oauth/kakao", loginController.oauthKakao);
+
 //모듈 주입
 module.exports = router;

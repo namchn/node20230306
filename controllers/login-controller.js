@@ -32,6 +32,8 @@ const moduleFs = require("../modules/fs/fs");
 const moduleAlertMove = require("../modules/util/alertMove");
 //에러 constructor
 const HttpError = require("../modules/http-error");
+//에러 constructor
+const moduleKakao = require("../modules/login/kakao");
 /////////////////////////////////////////////////////////////////////
 
 const loginHome = async (req, res) => {
@@ -475,7 +477,8 @@ const memberLogin = async (req, res) => {
           req.session,
           res,
           session,
-          members[0]
+          members[0],
+          {}
         );
       } else {
         errMsg = "비밀번호가 다릅니다.";
@@ -583,7 +586,7 @@ const memberLogin = async (req, res) => {
 };
 
 //멤버 로그아웃 로직
-const loginOut = async (req, res) => {
+const loginOut = async (req, res, next) => {
   const functionName = "loginOut";
   const relativeUrl = jsName + "/" + functionName;
   let today = moment().format();
@@ -621,6 +624,10 @@ const loginOut = async (req, res) => {
   //로그인 되었을 경우
   Object.assign(params, loginResult);
   if (isValid) {
+    //카카오로그인시
+    if (req.session.user.kakaoToken) {
+      moduleKakao.logout(req.session.user.kakaoToken, next);
+    }
     //로그아웃
     await loginCheckModule.deleteSession(req, res, session);
     errMsg = "다시 돌아와요~~ㅠㅠ";
@@ -632,6 +639,181 @@ const loginOut = async (req, res) => {
   }
 };
 
+//카카오 로그인
+const kakaoLogin = async (req, res, next) => {
+  const REST_API_KEY = "2407d6634467945cf968a74fdda19c29";
+  const REDIRECT_URI = "http://localhost:3002/login/oauth/kakao";
+  const domain = "https://kauth.kakao.com";
+  const kakaoUrl = `/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+  //res.send("");
+  return res.redirect(domain + kakaoUrl);
+};
+
+//REDIRECT_URI
+const oauthKakao = async (req, res, next) => {
+  const query = req.query;
+
+  //console.log("query.code : ");
+  //console.log(query.code);
+
+  const REST_API_KEY = "2407d6634467945cf968a74fdda19c29";
+  const REDIRECT_URI = "http://localhost:3002/login/oauth/kakao";
+
+  const axios = require("axios");
+
+  /* let form = {
+    grant_type: "authorization_code",
+    client_id: REST_API_KEY,
+    redirect_uri: REDIRECT_URI,
+    code: query.code,
+  };
+ */
+  //encodeURIComponent( REDIRECT_URI)
+
+  let tokenData;
+
+  try {
+    const response = await axios.post(
+      `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&code=${query.code}`,
+      {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      }
+    );
+    const data = response.data;
+
+    tokenData = data;
+
+    //return res.send(tokenData.access_token);
+    //console.log(data.results);
+  } catch (error) {
+    return next(error);
+  }
+
+  //
+  let userData;
+  try {
+    if ("access_token" in tokenData) {
+      const { access_token } = tokenData;
+      const response = await axios.get(`https://kapi.kakao.com/v2/user/me`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          //"Content-type": "application/x-www-form-urlencoded",
+        },
+      });
+      const data = response.data;
+      userData = data;
+      //res.send(data);
+    } else {
+      //res.send(tokenData);
+    }
+
+    //console.log(data.results);
+  } catch (error) {
+    return next(error);
+  }
+
+  if (userData) {
+    //로그인 과정
+    //let loginData;
+    let form = {
+      //member_id: userData.email.replace("@", "@"),
+      member_id: userData.id,
+      member_nm: userData.properties.nickname,
+      member_pw: userData.id,
+      member_pw2: userData.id,
+    };
+
+    let isValid = true;
+    let errMsg = "";
+    let member;
+    let redirectURL = "/";
+    let today = moment().format();
+
+    //아이디 중복 체크부분
+    try {
+      const checked = await moduleMysql.query("memberListOne", form.member_id);
+      console.log(today + "======");
+      isValid = checked.length > 0 ? false : true;
+
+      if (!isValid) {
+        member = checked[0];
+        //errMsg = "중복된 아이디입니다. ";
+        //const error = new HttpError(errMsg, 406);
+        //console.log(error);
+        //throw error;
+      }
+    } catch (error) {
+      next(error);
+    }
+
+    if (isValid) {
+      //암호화
+      let createdCryptoPieces = await moduleSaltCrypto.createCryptoPassword(
+        form.member_pw
+      );
+
+      let params = [
+        form.member_pw,
+        form.member_nm,
+        createdCryptoPieces.password,
+        createdCryptoPieces.salt,
+      ];
+
+      try {
+        const result = await moduleMysql.query("memberInsertOne", params);
+        console.log(today + "======");
+        console.log(result.affectedRows);
+        isValid = result.affectedRows != 1 ? false : true;
+        if (!isValid) {
+          errMsg = "회원가입에 실패하였습니다 다시 시도하여 주십시오. ";
+          const error = new HttpError(errMsg, 406);
+          console.log(error);
+          //throw error;
+        }
+      } catch (error) {
+        next(error);
+      }
+    }
+
+    if (isValid) {
+      try {
+        const checked = await moduleMysql.query(
+          "memberListOne",
+          form.member_id
+        );
+        console.log(today + "======");
+        isValid = checked.length > 0 ? true : false;
+
+        if (isValid) {
+          member = checked[0];
+          //errMsg = "중복된 아이디입니다. ";
+          //const error = new HttpError(errMsg, 406);
+          //console.log(error);
+          //throw error;
+        }
+      } catch (error) {
+        next(error);
+      }
+    }
+
+    //세션 생성
+    if (member) {
+      await loginCheckModule.makeSession(req.session, res, session, member, {
+        kakaoToken: tokenData.access_token,
+      });
+      errMsg = "로그인 하셨군요 반갑습니다.";
+      //res.redirect("/");
+    } else {
+      errMsg = "카카오 로그인이 안되었어요ㅠㅠ";
+    }
+    return res.send(await moduleAlertMove.alertMove(errMsg, redirectURL));
+  } else {
+    return res.send("로그인 오류");
+  }
+  //res.redirect(kakaoUrl);
+};
+
 module.exports = {
   joinForm,
   memberJoin,
@@ -640,6 +822,8 @@ module.exports = {
   loginConfirm,
   loginOut,
   loginHome,
+  kakaoLogin,
+  oauthKakao,
 };
 
 //exports.joinForm = joinForm;
