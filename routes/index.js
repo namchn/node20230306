@@ -6,9 +6,14 @@ const path = require("path"); //경로
 const responseTime = require("response-time"); //응답시간
 const timeout = require("connect-timeout"); //지연 응답 처리
 const HttpError = require("../modules/http-error"); //에러 constructor
-const sessionModule = require("../modules/session/express-session");
-const moduleAlertMove = require("../modules/util/alertMove");
-const moduleLoginCheck = require("../modules/login/login-check");
+const moduleSession = require("../modules/session/express-session"); //세션
+const moduleAlertMove = require("../modules/util/alertMove"); //리다이렉트
+const moduleLoginCheck = require("../modules/login/login-check"); //세션체크
+const moduleSessionCheck = require("../modules/login/session-check"); //세션체크모듈
+
+const moduleRateLimit = require("../modules/access/accessLimit"); //접속량 제한
+const moduleTimeLimit = require("../modules/access/timeLimit"); //접속지연 제한
+
 //*cross-origin 요청: 다른 서버의 요청을 가능하게 함
 const cors = require("cors"); //Cross-Origin Resource Sharing
 var corsOptions = {
@@ -35,7 +40,7 @@ filter: 특정 조건에 따라 압축을 할지 말지를 결정하는 것이�
 */
 
 //*세션 모듈 사용
-router.use(sessionModule.session);
+router.use(moduleSession.session);
 
 //*요청 body 파싱
 const urlencodedParser = express.urlencoded({ extended: true });
@@ -58,114 +63,75 @@ const dailyRoute = require("./daily"); //daily라우트 추가
 const functionRoute = require("./function"); //function라우트 추가
 const testRoute = require("./test"); //test라우트 추가
 
-//* auth 세션 인증체크
-const Auth = async (req, res, next) => {
-  const { isLogin } = await moduleLoginCheck.loginCheck(
-    null,
-    null,
-    req.session.user
-  );
-  //const { user } = req.session;
-  //if (user != undefined) {
-  if (isLogin) {
-    console.log("good : " + isLogin);
-    next();
-  } else {
-    //console.log(req.session);
-    res.send(
-      await moduleAlertMove.alertMove("로그인 후 사용해 주십시오.", "/")
-    );
-  }
-};
-
-//create a write stream (in append mode)
+// *create a write stream (in append mode)
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "/../_log/access.log"),
   { flags: "a" }
 );
+// *setup the logger
+router.use(morgan("combined", { stream: accessLogStream })); //로그관리
 
-//*setup the logger
-//router.use(morgan("combined", { stream: accessLogStream })); //로그관리
-
+// 요청에 대한 응답 시간 로그 기록
+const accessLogTimeCheck = fs.createWriteStream(
+  path.join(__dirname, "/../_log/access_time.log"),
+  { flags: "a" }
+);
+const accessLogTimeLongCheck = fs.createWriteStream(
+  path.join(__dirname, "/../_log/access_longtime.log"),
+  { flags: "a" }
+);
 //*요청에 대한 응답 시간
 router.use(
   responseTime((req, res, time) => {
-    console.log(req.method + ":" + req.url + ":" + time + "ms");
+    const flow =
+      req.method +
+      " : " +
+      req.url +
+      " : " +
+      time +
+      "ms" +
+      " /server-time : " +
+      new Date();
+    accessLogTimeCheck.write(flow + "\n");
+
+    if (time > 1000) {
+      // 접속시간이 긴 경우 따로 저장
+      accessLogTimeLongCheck.write(flow + "\n");
+    }
+    console.log(flow);
     //별도의 로그기록으로 남겨서 모니터링
   })
 );
 
 //* 지정된 시간까지 응답이 없을경우 연결종료
 //router.use(timeout('5s'))//5초
+const timeLimitFclist = [
+  moduleTimeLimit.timeout("2s"),
+  moduleTimeLimit.haltOnTimeout,
+  moduleTimeLimit.excuteTimeout,
+];
+router.get("/tout2", timeLimitFclist, (req, res, next) => {
+  res.send("saved as id ");
+});
 router.get(
-  "/tout2",
-  timeout("11s"),
-  haltOnTimeout,
-  excuteTimeout,
+  "/tout1",
+  moduleTimeLimit.timeout("2s"),
+  moduleTimeLimit.haltOnTimeout,
   (req, res, next) => {
-    res.send("saved as id ");
+    moduleTimeLimit.savePost(req.body, function (err, id) {
+      console.log("haltOnTimeout 2:");
+      console.log(err);
+      if (err) {
+        const error = new HttpError(err.message, 400); //err.statusCode
+        return next(error);
+        //return next(err);
+      }
+      if (req.timedout) return;
+      res.send("saved as id " + id);
+    });
   }
 );
-router.get("/tout1", timeout("0.00001s"), haltOnTimeout, (req, res, next) => {
-  savePost(req.body, function (err, id) {
-    console.log("haltOnTimeout 2:");
-    console.log(err);
-    if (err) {
-      const error = new HttpError(err.message, 400); //err.statusCode
-      return next(error);
-      //return next(err);
-    }
-    if (req.timedout) return;
-    res.send("saved as id " + id);
-  });
-});
-function haltOnTimeout(req, res, next) {
-  console.log("haltOnTimeout 1:");
-  console.log(req.timedout);
-  if (!req.timedout) next();
-}
-function savePost(post, cb) {
-  setTimeout(function () {
-    console.log("haltOnTimeout 3:");
-    cb(null, (Math.random() * 40000) >>> 0);
-  }, (Math.random() * 7000) >>> 0);
-}
-function excuteTimeout(req, res, next) {
-  setTimeout(function () {
-    console.log("haltOnTimeout 3:");
-    console.log(req.timedout);
-    if (req.timedout) return;
-    next();
-    //res.send(("saved as id " + Math.random() * 40000) >>> 0);
-  }, (Math.random() * 7000) >>> 0);
-}
 ////////////////////////////////////////////
-
-// ip 가져오기
-const requestIp = require("request-ip");
-// 동일ip 접속량 제한
-const expressRateLimit = require("express-rate-limit");
-const rateLimit = expressRateLimit({
-  windowMs: 1 * 10 * 1000,
-  max: 10,
-  delayMs: 1 * 1000,
-  handler(req, res) {
-    //let ip = requestIp.getClientIp(req);
-    let ip = req.ip;
-    console.log("ip: " + ip);
-    //console.log("statusCode: " + res.statusCode);
-    res.status(this.statusCode).json({
-      code: this.statusCode,
-      //message: "10초 10번 1초씩 요청가능",
-      message:
-        ip +
-        ": 해당 아이피로 짧은시간동안 너무 많은 요청이 들어옵니다. 그래서 해당아이피로 접근을 1분간 차단합니다. 1분 후 새로고침(F5) 해주세요",
-      //Too many requests, please try again later.
-    });
-  },
-});
-
-/////////////////////////////////////////////
 
 //*기본주소
 router.get("/", (req, res) => {
@@ -177,9 +143,29 @@ router.get("/", (req, res) => {
 //*라우터 설정
 router.use("/customer", customerRoute); //customer 라우트를 추가하고 기본경로로 /customer 사용
 router.use("/product", productRoute); //product 라우트를 추가하고 기본경로로 /product 사용
-router.use("/login", rateLimit, cors(), loginRoute); //login 라우트를 추가하고 기본경로로 /login 사용
-router.use("/board", cors(), Auth, compression(compressionOpt), boardRoute); //board 라우트를 추가하고 기본경로로 /board 사용
-router.use("/daily", cors(), Auth, dailyRoute); //daily 라우트를 추가하고 기본경로로 /daily 사용
+router.use(
+  "/login",
+  moduleRateLimit.rateLimit,
+  cors(),
+  compression(compressionOpt),
+  loginRoute
+); //login 라우트를 추가하고 기본경로로 /login 사용
+router.use(
+  "/board",
+  moduleRateLimit.rateLimit,
+  cors(),
+  moduleSessionCheck.Auth,
+  compression(compressionOpt),
+  boardRoute
+); //board 라우트를 추가하고 기본경로로 /board 사용
+router.use(
+  "/daily",
+  moduleRateLimit.rateLimit,
+  cors(),
+  moduleSessionCheck.Auth,
+  compression(compressionOpt),
+  dailyRoute
+); //daily 라우트를 추가하고 기본경로로 /daily 사용
 router.use("/function", cors(), functionRoute); //function 라우트를 추가하고 기본경로로 /function 사용
 router.use("/test", cors(), testRoute); //test 라우트를 추가하고 기본경로로 /test 사용
 
