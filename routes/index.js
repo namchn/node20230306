@@ -76,10 +76,12 @@ const accessLogTimeCheck = fs.createWriteStream(
   path.join(__dirname, "/../_log/access_time.log"),
   { flags: "a" }
 );
+// 요청에 대한 긴 응답 시간 로그 기록
 const accessLogTimeLongCheck = fs.createWriteStream(
   path.join(__dirname, "/../_log/access_longtime.log"),
   { flags: "a" }
 );
+
 //*요청에 대한 응답 시간
 router.use(
   responseTime((req, res, time) => {
@@ -90,7 +92,7 @@ router.use(
       " : " +
       time +
       "ms" +
-      " /server-time : " +
+      " : servertime - " +
       new Date();
     accessLogTimeCheck.write(flow + "\n");
 
@@ -115,7 +117,7 @@ router.get("/tout2", timeLimitFclist, (req, res, next) => {
 });
 router.get(
   "/tout1",
-  moduleTimeLimit.timeout("2s"),
+  moduleTimeLimit.timeout("0.001s"),
   moduleTimeLimit.haltOnTimeout,
   (req, res, next) => {
     moduleTimeLimit.savePost(req.body, function (err, id) {
@@ -169,6 +171,12 @@ router.use(
 router.use("/function", cors(), functionRoute); //function 라우트를 추가하고 기본경로로 /function 사용
 router.use("/test", cors(), testRoute); //test 라우트를 추가하고 기본경로로 /test 사용
 
+// 에러 로그 기록
+const errLogCheck = fs.createWriteStream(
+  path.join(__dirname, "/../_log/error.log"),
+  { flags: "a" }
+);
+
 //*라우터 공통 에러처리
 router.use((err, req, res, next) => {
   /* if (req.file) {
@@ -185,6 +193,19 @@ router.use((err, req, res, next) => {
   //console.log(req.method);
   console.log(err.code);
   console.log(err);
+
+  //404 에러
+  const flow =
+    req.method +
+    " : " +
+    req.url +
+    " : error.code - " +
+    err.code +
+    ": error.message -" +
+    err.message +
+    " : server-time - " +
+    new Date();
+  errLogCheck.write(flow + "\n");
 
   let redirectPage = "/error/500";
   if (err.code == 400) {
@@ -207,6 +228,18 @@ router.use((err, req, res, next) => {
 // *기본경로나 /사용 경로  가 아닌 잘못된 진입에 404 오류발생
 router.use((req, res, next) => {
   //const error = new HttpError("경로를 찾을 수 없습니다.", 404);
+
+  //404 에러
+  const flow =
+    req.method +
+    " : " +
+    req.url +
+    " : " +
+    " : error.code - " +
+    "404" +
+    ": servertime - " +
+    new Date();
+  errLogCheck.write(flow + "\n");
 
   res.status(404).render("errorPage/404");
   /** 

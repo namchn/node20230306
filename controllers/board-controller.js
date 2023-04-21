@@ -377,6 +377,8 @@ const view = async (req, res) => {
     }
 
     if (isValid) {
+      boardNo = articleOne[0].board_no;
+
       //작성자와 접속자의 일치여부 확인
       if (member_id == articleOne[0].writer_id) {
         authYn = true;
@@ -425,6 +427,7 @@ const view = async (req, res) => {
       article_no: articleNo,
       board_no: req.query.board_no,
     });
+    delete boardStore[boardNo]; //수정시  캐쉬된메모리 삭제
     res.render(renderURL, params);
   } else {
     if (resYn) res.redirect(redirectURL);
