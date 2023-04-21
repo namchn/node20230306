@@ -8,6 +8,9 @@ require("moment-timezone");
 //현재시간
 moment.tz.setDefault("Asia/Seoul");
 
+//설정값
+require("dotenv").config({ path: "_set/.env" });
+
 //로그인 체크 모듈
 const loginCheckModule = require("../modules/login/login-check");
 //session 전역변수 선언
@@ -641,13 +644,16 @@ const loginOut = async (req, res, next) => {
 
 //카카오 로그인
 const kakaoLogin = async (req, res, next) => {
-  const REST_API_KEY = "2407d6634467945cf968a74fdda19c29";
-  const REDIRECT_URI = "http://localhost:3002/login/oauth/kakao";
-  const domain = "https://kauth.kakao.com";
+  //const OPERATION = process.env.OPERATION;
+  const MY_DOMAIN = process.env.MY_DOMAIN;
+  const REST_API_KEY = process.env.REST_API_KEY;
+  const REDIRECT_URI = MY_DOMAIN + "/login/oauth/kakao";
+
+  const kakaoDomain = "https://kauth.kakao.com";
   const kakaoUrl = `/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
   //res.send("");
-  return res.redirect(domain + kakaoUrl);
+  return res.redirect(kakaoDomain + kakaoUrl);
 };
 
 //REDIRECT_URI
@@ -657,8 +663,10 @@ const oauthKakao = async (req, res, next) => {
   //console.log("query.code : ");
   //console.log(query.code);
 
-  const REST_API_KEY = "2407d6634467945cf968a74fdda19c29";
-  const REDIRECT_URI = "http://localhost:3002/login/oauth/kakao";
+  //const OPERATION = process.env.OPERATION;
+  const MY_DOMAIN = process.env.MY_DOMAIN;
+  const REST_API_KEY = process.env.REST_API_KEY;
+  const REDIRECT_URI = MY_DOMAIN + "/login/oauth/kakao";
 
   const axios = require("axios");
 
@@ -717,12 +725,19 @@ const oauthKakao = async (req, res, next) => {
     //로그인 과정
     //let loginData;
     let form = {
-      //member_id: userData.email.replace("@", "@"),
-      member_id: userData.id,
+      member_id: userData.id + "",
+      //member_id: userData.id,
       member_nm: userData.properties.nickname,
-      member_pw: userData.id,
-      member_pw2: userData.id,
+      member_pw: userData.id + "",
+      member_pw2: userData.id + "",
     };
+
+    /* let form = {
+      member_id: userData.kakao_account.email,
+      member_nm: userData.properties.nickname,
+      member_pw: userData.kakao_account.email,
+      member_pw2: userData.kakao_account.email,
+    } */
 
     let isValid = true;
     let errMsg = "";
@@ -754,7 +769,7 @@ const oauthKakao = async (req, res, next) => {
       );
 
       let params = [
-        form.member_pw,
+        form.member_id,
         form.member_nm,
         createdCryptoPieces.password,
         createdCryptoPieces.salt,
