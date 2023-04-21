@@ -89,9 +89,49 @@ const exmailFc = async (schedulingtimes, actionStr) => {
 };
 
 //파일을 메일 스케쥴링으로 보내기 자동 실행 함수
-const logfileExmailFc = async (schedulingtimes, actionStr) => {
+const logfileExmailFc = async (schedulingtimes, actionStr, fileResult) => {
   //////////////////////////////////////////////////
-  console.log("파일 을 메일 스케쥴링으로 보내기 자동실행");
+  console.log("파일을 메일 스케쥴링으로 보내기 자동실행");
+  let count = 0;
+
+  const actionFc = async () => {
+    let today = moment().format();
+    count++;
+
+    let html = "<div style='color:red' >html로 작성하였습니다.<div>"; //
+
+    console.log(count + ": 메일링 함수 호출 시각:" + today);
+    //내용
+    let params = {
+      from: "ncware@gmail.com",
+      to: "chunwoo84@hanmail.net",
+      subject: "로그파일 첨부된 정기 메일링입니다. :" + count,
+      text: actionStr + "파일을 첨부해서 이메일을 보냅니다. 시간은 " + today,
+      //html: Array.join(''),
+      //html: html,
+      attachments: [
+        {
+          filename: today + "error.log",
+          content: fileResult, //첨부파일 내용 생성
+        },
+      ],
+    };
+    //const r = await moduleMailing.googleMail(params);
+    //const action = "정해진 스케쥴 마다 메일을 보냅니다.";
+
+    console.log(actionStr);
+    try {
+      let response = await moduleMailing.googleMail(params);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //실행함수
+  const re = modulescheduling.scheduling3(schedulingtimes, actionFc);
+  //const result = "salt";
+  //res.send(await moduleAlertMove.alertMove("정규적으로 메일링 중입니다.", "/"));
+  return re;
 };
 
 exports.exmailFc = exmailFc;
