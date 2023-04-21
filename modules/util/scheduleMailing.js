@@ -88,4 +88,11 @@ const exmailFc = async (schedulingtimes, actionStr) => {
   return re;
 };
 
+//파일을 메일 스케쥴링으로 보내기 자동 실행 함수
+const logfileExmailFc = async (schedulingtimes, actionStr) => {
+  //////////////////////////////////////////////////
+  console.log("파일 을 메일 스케쥴링으로 보내기 자동실행");
+};
+
 exports.exmailFc = exmailFc;
+exports.logfileExmailFc = logfileExmailFc;

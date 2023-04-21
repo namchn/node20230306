@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+require("dotenv").config({ path: "_set/.env" }); //설정값
 const morgan = require("morgan"); //로그 관리
 const fs = require("fs"); //파일 시스템
 const path = require("path"); //경로
@@ -10,7 +11,6 @@ const moduleSession = require("../modules/session/express-session"); //세션
 const moduleAlertMove = require("../modules/util/alertMove"); //리다이렉트
 const moduleLoginCheck = require("../modules/login/login-check"); //세션체크
 const moduleSessionCheck = require("../modules/login/session-check"); //세션체크모듈
-
 const moduleRateLimit = require("../modules/access/accessLimit"); //접속량 제한
 const moduleTimeLimit = require("../modules/access/timeLimit"); //접속지연 제한
 
