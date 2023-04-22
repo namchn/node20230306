@@ -14,7 +14,7 @@ const moduleMailing = require("../mailing/google_mail");
 const modulescheduling = require("../scheduling/scheduling");
 
 //엑셀파일 을 메일 스케쥴링으로 보내기 자동 실행 함수
-const exmailFc = async (schedulingtimes, actionStr) => {
+const exmailFc = async (schedulingtimes, actionStr, next) => {
   //////////////////////////////////////////////////
   console.log("엑셀파일 을 메일 스케쥴링으로 보내기 자동실행");
   //엑셀 파일 첨부
@@ -77,7 +77,8 @@ const exmailFc = async (schedulingtimes, actionStr) => {
     try {
       let response = await moduleMailing.googleMail(params);
     } catch (err) {
-      console.log(err);
+      next(err);
+      //console.log(err);
     }
   };
 

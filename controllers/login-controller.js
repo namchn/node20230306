@@ -662,6 +662,7 @@ const oauthKakao = async (req, res, next) => {
 
   //console.log("query.code : ");
   //console.log(query.code);
+  //console.log(req.originalUrl);
 
   //const OPERATION = process.env.OPERATION;
   const MY_DOMAIN = process.env.MY_DOMAIN;
@@ -681,21 +682,25 @@ const oauthKakao = async (req, res, next) => {
 
   let tokenData;
 
-  try {
-    const response = await axios.post(
-      `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&code=${query.code}`,
-      {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      }
-    );
-    const data = response.data;
+  if (query.code) {
+    try {
+      const response = await axios.post(
+        `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&code=${query.code}`,
+        {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        }
+      );
+      const data = response.data;
 
-    tokenData = data;
+      tokenData = data;
 
-    //return res.send(tokenData.access_token);
-    //console.log(data.results);
-  } catch (error) {
-    return next(error);
+      //return res.send(tokenData.access_token);
+      //console.log(data.results);
+    } catch (error) {
+      return next(error);
+    }
+  } else {
+    return res.redirect("/");
   }
 
   //

@@ -1,35 +1,11 @@
-//const cookieParser = require("cookie-parser");
 require("dotenv").config({ path: "_set/.env" }); //설정값
-const redis = require("redis"); //레디스
-
-//* 레디스  연결
-// redis[s]://[[username][:password]@][host][:port][/db-number]
-const redisClient = redis.createClient({
-  url: `redis://${process.env.REDIS_USERNAME}:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}/0`,
-  legacyMode: true, // 반드시 설정 !!  설정 안하면 connect-redis 동작 안함
-});
-redisClient.on("connect", () => {
-  console.info("Redis connected!");
-});
-redisClient.on("error", (err) => {
-  console.error("Redis Client Error", err);
-});
-redisClient.connect().then(); // redis v4 연결 (비동기)
-const redisCli = redisClient.v4; // 기본 redisClient 객체는 콜백기반인데 v4버젼은 프로미스 기반이라 사용
-
-/* (async () => {
-  let bool = await redisCli.set("key1", "123"); // OK
-  let data = await redisCli.get("key1"); // 123
-  console.log(data);
-})(); */
-////////////
 
 //전역변수  세션 선언
 const session = require("express-session");
 const MemoryStore = require("memorystore")(session); //메모리저장
 const fileStore = require("session-file-store")(session); //파일저장
-const RedisStore = require("connect-redis").default; // redis저장  express-session 객체를 넣는다.
-//const RedisStore = require("connect-redis")(session); //새버전 변경 :버전문제 해결 안됨
+const RedisStore = require("connect-redis").default; // 7버전 redis저장
+//const RedisStore = require("connect-redis")(session); //express-session 객체를 넣는다.
 
 //setting 값 설정
 const path = require("path");
@@ -71,6 +47,9 @@ if (sessionStoreMethod == "fileStore") {
 } else if (sessionStoreMethod == "DB") {
   cookieStore = new MemoryStore({ checkPeriod: cookieMaxAge });
 } else if (sessionStoreMethod == "RedisStore") {
+  //레디스 연결
+  const moduleRedis = require("../session/redis");
+  const redisCli = moduleRedis.redisCli;
   cookieStore = new RedisStore({ client: redisCli, prefix: "session:" });
 } else {
   //MemoryStore
