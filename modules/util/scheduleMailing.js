@@ -12,6 +12,7 @@ const moduleXlsx = require("../fileStore/xlsx");
 const moduleMailing = require("../mailing/google_mail");
 //스케쥴 모듈
 const modulescheduling = require("../scheduling/scheduling");
+const { DATE } = require("sequelize");
 
 //엑셀파일 을 메일 스케쥴링으로 보내기 자동 실행 함수
 const exmailFc = async (schedulingtimes, actionStr, next) => {
@@ -135,5 +136,20 @@ const logfileExmailFc = async (schedulingtimes, actionStr, fileResult) => {
   return re;
 };
 
+//재기동 알림 메일 보내기 자동실행 함수
+const startExmailFc = async (from, to, actionStr) => {
+  //////////////////////////////////////////////////
+  console.log(actionStr);
+  let params = {
+    from: from,
+    to: to,
+    subject: "시스템 재기동",
+    text: "시스템 재기동하였습니다. " + new Date(),
+    //html: Array.join(''),
+  };
+  const r = await moduleMailing.googleMail(params);
+};
+
 exports.exmailFc = exmailFc;
 exports.logfileExmailFc = logfileExmailFc;
+exports.startExmailFc = startExmailFc;

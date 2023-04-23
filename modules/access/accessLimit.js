@@ -7,8 +7,8 @@ const rateLimit = expressRateLimit({
   max: 20,
   delayMs: 1 * 1000,
   handler(req, res) {
-    //let ip = requestIp.getClientIp(req);
-    let ip = req.ip;
+    let ip = requestIp.getClientIp(req);
+    //let ip = req.ip;
     console.log("ip: " + ip);
     //console.log("statusCode: " + res.statusCode);
     res.status(this.statusCode).json({

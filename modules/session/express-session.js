@@ -38,7 +38,7 @@ cookieSecure = process.env.COOKEI_SECURE
 sessionName = process.env.SESSION_NAME; 
 */
 
-console.log("===============================================");
+console.log("===========" + new Date() + "=============");
 
 //session 저장 방식
 let cookieStore;

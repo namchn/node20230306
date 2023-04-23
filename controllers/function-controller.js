@@ -276,7 +276,7 @@ const mailing = async (req, res, next) => {
     "param": 
         {
         "from": "ncware@gmail.com",
-        "to": "likencw@naver.com",
+        "to": "chunwoo84@hanmail.net",
         "subject": "안녕2",
         "text": "방가워요2"
         }
@@ -284,7 +284,7 @@ const mailing = async (req, res, next) => {
   */
   let params = {
     from: "ncware@gmail.com",
-    to: "likencw@naver.com",
+    to: "chunwoo84@hanmail.net",
     subject: "안녕하세요",
     text: "반갑습니다.",
     //html: Array.join(''),

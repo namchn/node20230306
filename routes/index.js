@@ -22,8 +22,8 @@ var corsOptions = {
 };
 const compression = require("compression"); //응답을 압축
 const compressionOpt = {
-  level: 6,
-  threshold: 100 * 1000,
+  level: 6, //압축단계
+  threshold: 100 * 1000, //크기제한
   filter: (req, res) => {
     if (req.headers["x-no-compression"]) {
       // header에 x-no-compression이 있으면, 압축하지 않도록 false를 반환한다.

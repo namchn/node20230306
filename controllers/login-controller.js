@@ -680,27 +680,32 @@ const oauthKakao = async (req, res, next) => {
  */
   //encodeURIComponent( REDIRECT_URI)
 
+  //카카오 로그인 취소시 리다이렉트 
+  if (query.error) {
+    if (query.error == "access_denied") {
+    } else {
+      console.log(query.error);
+    }
+    return res.redirect("/");
+  }
+
   let tokenData;
 
-  if (query.code) {
-    try {
-      const response = await axios.post(
-        `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&code=${query.code}`,
-        {
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        }
-      );
-      const data = response.data;
+  try {
+    const response = await axios.post(
+      `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&code=${query.code}`,
+      {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      }
+    );
+    const data = response.data;
 
-      tokenData = data;
+    tokenData = data;
 
-      //return res.send(tokenData.access_token);
-      //console.log(data.results);
-    } catch (error) {
-      return next(error);
-    }
-  } else {
-    return res.redirect("/");
+    //return res.send(tokenData.access_token);
+    //console.log(data.results);
+  } catch (error) {
+    return next(error);
   }
 
   //

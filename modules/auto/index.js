@@ -1,3 +1,5 @@
+require("dotenv").config({ path: "_set/.env" }); //설정값
+
 /** 자동 실행 함수들 */
 const moduleScheduleMailing = require("../util/scheduleMailing");
 
@@ -28,6 +30,7 @@ const autoListExcuting = async (next) => {
     autolist.push("moduleScheduleMailing.logfileExmailFc");
     const moduleFs = require("../fs/fs");
     const path = require("path");
+    //const logPath = path.join(__dirname, "/../../_log/access.log");
     const logPath = path.join(__dirname, "/../../_log/error.log");
     const log = moduleFs.readFileSync(logPath, "utf8"); //JSON.stringify(result);
     //console.log(log);
@@ -38,6 +41,16 @@ const autoListExcuting = async (next) => {
       //"0-59 * * * *",
       //"매분 마다 메일을 보냅니다."
     );
+
+    //4.재기동 메일링
+    if (process.env.OPERATION == "true") {
+      autolist.push("moduleScheduleMailing.startExmailFc");
+      const ex4 = await moduleScheduleMailing.startExmailFc(
+        "ncware@gmail.com",
+        "chunwoo84@hanmail.net",
+        "재기동 알림 메일 보내기 자동실행"
+      );
+    }
   } catch (error) {
     next(error);
   }
