@@ -18,7 +18,6 @@
 /_log/*
 
 ######
-package.json
 /node_modules
 /_set/system_setting.json.sample
 /_set/system_setting.json
