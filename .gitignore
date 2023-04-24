@@ -12,12 +12,13 @@
 
 
 #######
-/client/etc/html/
-/client/etc/html1/
+/client/etc/html/*
+/client/etc/html1/*
 /client/etc/img/*
 /_log/*
 
 ######
+package.json
 /node_modules
 /_set/system_setting.json.sample
 /_set/system_setting.json
